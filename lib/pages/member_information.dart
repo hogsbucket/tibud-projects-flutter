@@ -659,6 +659,7 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                               width: size.width * .15,
                               height: size.height * .05,
                               child: ElevatedButton(
+                                statesController: MaterialStatesController(),
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all(Colors.green.shade900,),
                                 ),
