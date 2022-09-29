@@ -1,5 +1,5 @@
 
-import 'package:tibuc_care_system/model/model.dart';
+import 'package:tibud_care_system/model/model.dart';
 
 String username = '';
 String password = '';

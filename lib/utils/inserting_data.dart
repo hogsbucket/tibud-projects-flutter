@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
-import 'package:tibuc_care_system/model/model.dart';
-import 'package:tibuc_care_system/server/server.dart';
+import 'package:tibud_care_system/model/model.dart';
+import 'package:tibud_care_system/server/server.dart';
 
 Future<dynamic> newConsult(String memID, String confinee, String relationship, String hospital, String doc, String dod, String basic, String claims, String classification, String remarks, String diagnosis, UserAccount user) async {
   final consult = Consultation();

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tibuc_care_system/model/model.dart';
-import 'package:tibuc_care_system/pages/admin.dart';
-import 'package:tibuc_care_system/pages/dashboard.dart';
-import 'package:tibuc_care_system/pages/member_information.dart';
-import 'package:tibuc_care_system/server/server.dart';
-import 'package:tibuc_care_system/utils/constant.dart';
+import 'package:tibud_care_system/model/model.dart';
+import 'package:tibud_care_system/pages/admin.dart';
+import 'package:tibud_care_system/pages/dashboard.dart';
+import 'package:tibud_care_system/pages/member_information.dart';
+import 'package:tibud_care_system/server/server.dart';
+import 'package:tibud_care_system/utils/constant.dart';
 
 class LoadForAdmin extends StatefulWidget {
   const LoadForAdmin({super.key});

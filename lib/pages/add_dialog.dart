@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tibuc_care_system/model/model.dart';
-import 'package:tibuc_care_system/utils/constant.dart';
-import 'package:tibuc_care_system/utils/inserting_data.dart';
+import 'package:tibud_care_system/model/model.dart';
+import 'package:tibud_care_system/utils/constant.dart';
+import 'package:tibud_care_system/utils/inserting_data.dart';
 
 class AddNewData extends StatefulWidget {
   AddNewData({super.key, required this.index, required this.memberID, required this.userAccount});

@@ -1,6 +1,6 @@
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
-import 'package:tibuc_care_system/pages/login.dart';
+import 'package:tibud_care_system/pages/login.dart';
 
 void main() {
   runApp(const MyApp());

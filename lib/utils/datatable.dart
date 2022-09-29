@@ -1,8 +1,8 @@
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:tibuc_care_system/model/model.dart';
-import 'package:tibuc_care_system/server/server.dart';
-import 'package:tibuc_care_system/utils/constant.dart';
+import 'package:tibud_care_system/model/model.dart';
+import 'package:tibud_care_system/server/server.dart';
+import 'package:tibud_care_system/utils/constant.dart';
 
 List<PlutoColumn> dashCol(){
   List<PlutoColumn> col = [

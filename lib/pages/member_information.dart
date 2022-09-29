@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:pluto_grid/pluto_grid.dart';
-import 'package:tibuc_care_system/model/model.dart';
-import 'package:tibuc_care_system/pages/add_dialog.dart';
-import 'package:tibuc_care_system/pages/loading.dart';
-import 'package:tibuc_care_system/server/server.dart';
-import 'package:tibuc_care_system/utils/constant.dart';
-import 'package:tibuc_care_system/utils/datatable.dart';
-import 'package:tibuc_care_system/utils/window_buttons.dart';
+import 'package:tibud_care_system/model/model.dart';
+import 'package:tibud_care_system/pages/add_dialog.dart';
+import 'package:tibud_care_system/pages/loading.dart';
+import 'package:tibud_care_system/server/server.dart';
+import 'package:tibud_care_system/utils/constant.dart';
+import 'package:tibud_care_system/utils/datatable.dart';
+import 'package:tibud_care_system/utils/window_buttons.dart';
 
 class Information extends StatefulWidget {
   Information({super.key, required this.info, required this.user});

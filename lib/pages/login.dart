@@ -6,10 +6,10 @@ import 'package:animations/animations.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:tibuc_care_system/pages/loading.dart';
-import 'package:tibuc_care_system/server/server.dart';
-import 'package:tibuc_care_system/utils/constant.dart';
-import 'package:tibuc_care_system/utils/window_buttons.dart';
+import 'package:tibud_care_system/pages/loading.dart';
+import 'package:tibud_care_system/server/server.dart';
+import 'package:tibud_care_system/utils/constant.dart';
+import 'package:tibud_care_system/utils/window_buttons.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
