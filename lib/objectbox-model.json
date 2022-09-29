@@ -1,0 +1,565 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:6616238366612463794",
+      "lastPropertyId": "10:7520232748038278577",
+      "name": "Accidents",
+      "properties": [
+        {
+          "id": "1:8085132607275300696",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:8945079294925773047",
+          "name": "accBasic",
+          "type": 8
+        },
+        {
+          "id": "3:6552818780104920579",
+          "name": "accClaims",
+          "type": 8
+        },
+        {
+          "id": "4:4772217595840132839",
+          "name": "doc",
+          "type": 9
+        },
+        {
+          "id": "5:9021497143545319861",
+          "name": "dod",
+          "type": 9
+        },
+        {
+          "id": "6:1455430562005964962",
+          "name": "hospital",
+          "type": 9
+        },
+        {
+          "id": "7:1566974131130532251",
+          "name": "classification",
+          "type": 9
+        },
+        {
+          "id": "8:1788222101871470225",
+          "name": "remarks",
+          "type": 9
+        },
+        {
+          "id": "9:5499510841280653825",
+          "name": "confinee",
+          "type": 9
+        },
+        {
+          "id": "10:7520232748038278577",
+          "name": "relationship",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:4538996385956794291",
+      "lastPropertyId": "3:4808498012821867058",
+      "name": "Contributions",
+      "properties": [
+        {
+          "id": "1:8900875208024482548",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6081702498866412189",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "3:4808498012821867058",
+          "name": "date",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:3448344149221197734",
+      "lastPropertyId": "6:3156904636070508949",
+      "name": "DAC",
+      "properties": [
+        {
+          "id": "1:9101178823689020107",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2950123791986479112",
+          "name": "amount",
+          "type": 8
+        },
+        {
+          "id": "3:8432505190972109898",
+          "name": "dod",
+          "type": 9
+        },
+        {
+          "id": "4:6430539573320707938",
+          "name": "classification",
+          "type": 9
+        },
+        {
+          "id": "5:7332375809050664695",
+          "name": "relationship",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "4:5786412100710403854",
+      "lastPropertyId": "6:9055976620516131368",
+      "name": "Dental",
+      "properties": [
+        {
+          "id": "1:7767330871716371622",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:9123570290336058357",
+          "name": "clinic",
+          "type": 9
+        },
+        {
+          "id": "3:1091803123625581623",
+          "name": "classification",
+          "type": 9
+        },
+        {
+          "id": "4:7476366167751657625",
+          "name": "date",
+          "type": 9
+        },
+        {
+          "id": "5:3330447993813885151",
+          "name": "confinee",
+          "type": 9
+        },
+        {
+          "id": "6:9055976620516131368",
+          "name": "relationship",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "5:476759643342158719",
+      "lastPropertyId": "6:3682268984604281822",
+      "name": "Direct",
+      "properties": [
+        {
+          "id": "1:7719388988558809162",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5380614466634214577",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:1085713156566535373",
+          "name": "relationship",
+          "type": 9
+        },
+        {
+          "id": "4:1372828103218075481",
+          "name": "memberId",
+          "type": 11,
+          "flags": 520,
+          "indexId": "1:729233550886902461",
+          "relationTarget": "Member"
+        },
+        {
+          "id": "5:2285748353358802894",
+          "name": "age",
+          "type": 9
+        },
+        {
+          "id": "6:3682268984604281822",
+          "name": "role",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "6:5252221924896476701",
+      "lastPropertyId": "10:6213612305980319691",
+      "name": "Hospitalization",
+      "properties": [
+        {
+          "id": "1:5121262100529511156",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5156427414947759578",
+          "name": "hosBasic",
+          "type": 8
+        },
+        {
+          "id": "3:2980777192797725353",
+          "name": "hosClaims",
+          "type": 8
+        },
+        {
+          "id": "4:7670954280731640809",
+          "name": "hospital",
+          "type": 9
+        },
+        {
+          "id": "5:312731205247392775",
+          "name": "doa",
+          "type": 9
+        },
+        {
+          "id": "6:4927704288821334867",
+          "name": "dod",
+          "type": 9
+        },
+        {
+          "id": "7:966261577359945013",
+          "name": "classification",
+          "type": 9
+        },
+        {
+          "id": "8:126035015952880088",
+          "name": "remarks",
+          "type": 9
+        },
+        {
+          "id": "9:7143352603016402760",
+          "name": "confinee",
+          "type": 9
+        },
+        {
+          "id": "10:6213612305980319691",
+          "name": "relationship",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "8:8929075795433266020",
+      "lastPropertyId": "7:3747697036762805258",
+      "name": "Laboratory",
+      "properties": [
+        {
+          "id": "1:250992942835996094",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:5876524497737211904",
+          "name": "labBasic",
+          "type": 8
+        },
+        {
+          "id": "3:8974398931026257600",
+          "name": "labClaims",
+          "type": 8
+        },
+        {
+          "id": "4:3185721845714079732",
+          "name": "dol",
+          "type": 9
+        },
+        {
+          "id": "5:1079131041596694253",
+          "name": "hospital",
+          "type": 9
+        },
+        {
+          "id": "6:8015960668681202498",
+          "name": "confinee",
+          "type": 9
+        },
+        {
+          "id": "7:3747697036762805258",
+          "name": "relationship",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "9:1463957562562446774",
+      "lastPropertyId": "5:2713212363384933928",
+      "name": "Member",
+      "properties": [
+        {
+          "id": "1:4013240693617203300",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:6950206009610912461",
+          "name": "idno",
+          "type": 9
+        },
+        {
+          "id": "3:4868971031295906487",
+          "name": "member",
+          "type": 9
+        },
+        {
+          "id": "4:6646866832938031760",
+          "name": "branch",
+          "type": 9
+        },
+        {
+          "id": "5:2713212363384933928",
+          "name": "dateOfHire",
+          "type": 9
+        }
+      ],
+      "relations": [
+        {
+          "id": "1:7639316237905091443",
+          "name": "user",
+          "targetId": "10:3769832133885239797"
+        },
+        {
+          "id": "2:8646642514439183851",
+          "name": "contributions",
+          "targetId": "2:4538996385956794291"
+        },
+        {
+          "id": "4:1273071966337519091",
+          "name": "lab",
+          "targetId": "8:8929075795433266020"
+        },
+        {
+          "id": "5:2464402361525869478",
+          "name": "accident",
+          "targetId": "1:6616238366612463794"
+        },
+        {
+          "id": "6:4213690826600864652",
+          "name": "hospitalization",
+          "targetId": "6:5252221924896476701"
+        },
+        {
+          "id": "7:7250153777481480373",
+          "name": "dac",
+          "targetId": "3:3448344149221197734"
+        },
+        {
+          "id": "8:1238755653415730261",
+          "name": "dental",
+          "targetId": "4:5786412100710403854"
+        },
+        {
+          "id": "10:7385229520561401049",
+          "name": "consult",
+          "targetId": "11:1039100369912356124"
+        }
+      ]
+    },
+    {
+      "id": "10:3769832133885239797",
+      "lastPropertyId": "5:5018790968126859646",
+      "name": "UserAccount",
+      "properties": [
+        {
+          "id": "1:3345831581918051079",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:7682873812696209359",
+          "name": "name",
+          "type": 9
+        },
+        {
+          "id": "3:6767237679222347616",
+          "name": "idno",
+          "type": 9
+        },
+        {
+          "id": "4:4733066633833774301",
+          "name": "username",
+          "type": 9
+        },
+        {
+          "id": "5:5018790968126859646",
+          "name": "password",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "11:1039100369912356124",
+      "lastPropertyId": "11:1326361794804224515",
+      "name": "Consultation",
+      "properties": [
+        {
+          "id": "1:7068271077309453029",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1031423808397005219",
+          "name": "labBasic",
+          "type": 8
+        },
+        {
+          "id": "3:3932583657682095766",
+          "name": "labClaims",
+          "type": 8
+        },
+        {
+          "id": "4:827971042550797619",
+          "name": "doc",
+          "type": 9
+        },
+        {
+          "id": "5:6585794331288558275",
+          "name": "hospital",
+          "type": 9
+        },
+        {
+          "id": "6:7122934134836218452",
+          "name": "confinee",
+          "type": 9
+        },
+        {
+          "id": "7:2616206540449271063",
+          "name": "relationship",
+          "type": 9
+        },
+        {
+          "id": "8:8534724745789385866",
+          "name": "classification",
+          "type": 9
+        },
+        {
+          "id": "9:9090798510495818016",
+          "name": "remarks",
+          "type": 9
+        },
+        {
+          "id": "10:8999532295435614771",
+          "name": "diagnosis",
+          "type": 9
+        },
+        {
+          "id": "11:1326361794804224515",
+          "name": "dod",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "12:9169254579111546288",
+      "lastPropertyId": "3:3485550547227972214",
+      "name": "AdminAccount",
+      "properties": [
+        {
+          "id": "1:7485016618574173207",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1426246043027829607",
+          "name": "username",
+          "type": 9
+        },
+        {
+          "id": "3:3485550547227972214",
+          "name": "password",
+          "type": 9
+        }
+      ],
+      "relations": [
+        {
+          "id": "11:6162217503267888750",
+          "name": "activities",
+          "targetId": "14:145755932700576630"
+        }
+      ]
+    },
+    {
+      "id": "14:145755932700576630",
+      "lastPropertyId": "4:6181265665279674857",
+      "name": "ActivityRecords",
+      "properties": [
+        {
+          "id": "1:6866246098663625352",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2412781331736630149",
+          "name": "activity",
+          "type": 9
+        },
+        {
+          "id": "3:2538261834983984371",
+          "name": "userAccount",
+          "type": 9
+        },
+        {
+          "id": "4:6181265665279674857",
+          "name": "date",
+          "type": 10
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "14:145755932700576630",
+  "lastIndexId": "2:5631215408572733555",
+  "lastRelationId": "11:6162217503267888750",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [
+    5459638766645911991,
+    1270271962864349312
+  ],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [
+    4932694111052237382,
+    749917723072719171,
+    7009093638138749425,
+    167967456175128507,
+    3156904636070508949,
+    1263046802759305653,
+    1768963068744919649
+  ],
+  "retiredRelationUids": [
+    5900527241006885182,
+    4763994552746292821
+  ],
+  "version": 1
+}
