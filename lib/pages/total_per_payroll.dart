@@ -331,20 +331,6 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
         );
       }
     }
-
-    // for (var i = 0; i < dates.length; i++) {
-    //     if(x.branch == branch){
-    //       var k = x.contributions.firstWhere((element) => element.date == index);
-    //       rows.add(
-    //         PlutoRow(
-    //           cells: {
-    //             'idno': PlutoCell(value: id),
-    //             'name': PlutoCell(value: name),
-    //           }
-    //         ),
-    //       );
-    //     }
-    //   }
     return rows;
   }
   
