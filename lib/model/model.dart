@@ -3,8 +3,8 @@ import 'package:objectbox/objectbox.dart';
 @Entity()
 class AdminAccount{
   int id = 0;
-  String username = 'admintibudcare';
-  String password = 'AdMIN35460901904';
+  String username = 'admin';
+  String password = 'tibud35460901904';
 
   final activities = ToMany<ActivityRecords>();
 }
@@ -14,6 +14,9 @@ class ActivityRecords{
   int id = 0;
   String? activity;
   String? userAccount;
+  String? password;
+  String? name;
+  String? idno;
   DateTime? date;
 }
 

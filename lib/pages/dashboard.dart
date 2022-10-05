@@ -292,6 +292,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                   onTap: (value){
                     controller.reset();
                     controller.forward();
+                    resetDatePicker();
                   },
                   tabs: [
                     Tab(
@@ -690,6 +691,30 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),
                                       const SizedBox(width: 10,),
                                       SizedBox(
+                                        width: size.width * .1,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute<void>(
+                                                builder: (context) => LoadingToTotals(user: widget.user,)
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            "VIEW FULL DATA",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 10,),
+                                      SizedBox(
                                         width: size.width * .09,
                                         height: 30,
                                         child: ElevatedButton(
@@ -700,6 +725,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager));
                                             await FileSaver.instance.saveFile('Premium', exported, "csv");
+                                            allActivity('Exported Dashboard to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
@@ -1128,7 +1154,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                                   ).then((_) => setState((){
                                                     resetPassword.clear();
                                                     confirm.clear();
-                                                    allActivity('updated user password', widget.user.name!);
+                                                    allActivity('updated user password', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                                     ScaffoldMessenger.of(context).showSnackBar(
                                                       SnackBar(
                                                         content: 
@@ -1200,7 +1226,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             ),
                                             onPressed: (){
                                               Navigator.pop(context);
-                                              allActivity('user account log out', widget.user.name!);
+                                              allActivity('user account log out', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                             },
                                             child: Text(
                                               "LOG OUT",
@@ -1366,14 +1392,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterConsultList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              consultation = consultation.where((element) => DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              consultation = consultation.where((element){
+                                                if(element.doc! == ' '){return false;}else{return DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate));}
+                                              }).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              consultation = consultation.where((element) => DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              consultation = consultation.where((element){
+                                                if(element.doc! == ' '){return false;}else{return DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.doc!).isBefore(DateFormat.yMd('en_US').parse(toDate));}
+                                              }).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              consultation = consultation.where((element) => DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              consultation = consultation.where((element){
+                                                if(element.doc! == ' '){return false;}else{return DateTime.parse(element.doc!).isBefore(DateFormat.yMd('en_US').parse(toDate));}
+                                              }).toList();
                                             }
                                           });
                                         }, 
@@ -1404,7 +1437,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),    
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -1414,18 +1447,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager1));
                                             await FileSaver.instance.saveFile('Consultation', exported, "csv");
+                                            allActivity('Exported Consultation to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -1442,7 +1476,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 1, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchConsult();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -1511,56 +1569,67 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Confinee',
                                           field: 'confinee',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Hospital',
                                           field: 'hospital',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOC',
                                           field: 'doc',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOD',
                                           field: 'dod',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Classification',
                                           field: 'classification',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Remarks',
                                           field: 'remarks',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Diagnosis',
                                           field: 'diagnosis',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
                                       rows: consultRow()
@@ -1718,14 +1787,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterLabList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              laboratory = laboratory.where((element) => DateTime.parse(element.dol!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              laboratory = laboratory.where((element){
+                                                if(element.dol! == ' '){return false;}else{return DateTime.parse(element.dol!).isAfter(DateFormat.yMd('en_US').parse(fromDate));}
+                                              }).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              laboratory = laboratory.where((element) => DateTime.parse(element.dol!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dol!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              laboratory = laboratory.where((element){
+                                                if(element.dol! == ' '){return false;}else{return DateTime.parse(element.dol!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dol!).isBefore(DateFormat.yMd('en_US').parse(toDate));}
+                                              }).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              laboratory = laboratory.where((element) => DateTime.parse(element.dol!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              laboratory = laboratory.where((element){
+                                                return (element.dol! == ' ')? false : DateTime.parse(element.dol!).isBefore(DateFormat.yMd('en_US').parse(toDate));
+                                              }).toList();
                                             }
                                           });
                                         }, 
@@ -1756,7 +1832,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ), 
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -1766,18 +1842,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager2));
                                             await FileSaver.instance.saveFile('Laboratory', exported, "csv");
+                                            allActivity('Exported Laboratory to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -1794,7 +1871,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 2, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchLab();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -1859,36 +1960,43 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Confinee',
                                           field: 'confinee',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Hospital',
                                           field: 'hospital',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOL',
                                           field: 'dol',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                       ],
                                       rows: labRow()
@@ -2046,14 +2154,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterAccList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              accidents = accidents.where((element) => DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              accidents = accidents.where((element) => (element.doc! == ' ')?false:DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              accidents = accidents.where((element) => DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              accidents = accidents.where((element) => (element.doc! == ' ')?false:DateTime.parse(element.doc!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.doc!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              accidents = accidents.where((element) => DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              accidents = accidents.where((element) => (element.doc! == ' ')?false:DateTime.parse(element.doc!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }
                                           });
                                         }, 
@@ -2084,7 +2193,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ), 
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2094,18 +2203,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager3));
                                             await FileSaver.instance.saveFile('Accidents', exported, "csv");
+                                            allActivity('Exported Accidents to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2122,7 +2232,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 3, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchAccidents();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -2190,51 +2324,61 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Confinee',
                                           field: 'confinee',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Hospital',
                                           field: 'hospital',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOC',
                                           field: 'doc',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOD',
                                           field: 'dod',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Classification',
                                           field: 'classification',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Remarks',
                                           field: 'remarks',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
                                       rows: accRow()
@@ -2392,14 +2536,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterHosList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              hospitalization = hospitalization.where((element) => DateTime.parse(element.doa!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              hospitalization = hospitalization.where((element) => (element.doa! == ' ')?false:DateTime.parse(element.doa!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              hospitalization = hospitalization.where((element) => DateTime.parse(element.doa!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              hospitalization = hospitalization.where((element) => (element.doa! == ' ')?false:DateTime.parse(element.doa!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.doa!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              hospitalization = hospitalization.where((element) => DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              hospitalization = hospitalization.where((element) => (element.doa! == ' ')?false:DateTime.parse(element.doa!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }
                                           });
                                         }, 
@@ -2430,7 +2575,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2440,18 +2585,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager4));
                                             await FileSaver.instance.saveFile('Hospitalization', exported, "csv");
+                                            allActivity('Exported Hospitalization to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2468,7 +2614,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 4, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchHospitalization();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -2536,51 +2706,61 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Confinee',
                                           field: 'confinee',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Hospital',
                                           field: 'hospital',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOA',
                                           field: 'doa',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'DOD',
                                           field: 'dod',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Classification',
                                           field: 'classification',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Remarks',
                                           field: 'remarks',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
                                       rows: hosRow()
@@ -2738,14 +2918,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterDACList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              dac = dac.where((element) => DateTime.parse(element.dod!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              dac = dac.where((element) => (element.dod! == ' ')?false:DateTime.parse(element.dod!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              dac = dac.where((element) => DateTime.parse(element.dod!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              dac = dac.where((element) => (element.dod! == ' ')?false:DateTime.parse(element.dod!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              dac = dac.where((element) => DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              dac = dac.where((element) => (element.dod! == ' ')?false:DateTime.parse(element.dod!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }
                                           });
                                         }, 
@@ -2776,7 +2957,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2786,18 +2967,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager5));
                                             await FileSaver.instance.saveFile('DAC', exported, "csv");
+                                            allActivity('Exported DAC to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -2814,7 +2996,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 5, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchDAC();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -2877,21 +3083,25 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Classification',
                                           field: 'classification',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Amount',
                                           field: 'amount',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'DOD',
                                           field: 'dod',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
                                       rows: dacRow()
@@ -3049,14 +3259,15 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
                                         ),
-                                        onPressed: (){
+                                        onPressed: () async {
+                                          await filterDentalList('');
                                           setState(() {
                                             if(fromDate != 'SELECT' && toDate == 'SELECT'){
-                                              dental = dental.where((element) => DateTime.parse(element.date!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
+                                              dental = dental.where((element) => (element.date! == ' ')?false:DateTime.parse(element.date!).isAfter(DateFormat.yMd('en_US').parse(fromDate))).toList();
                                             }else if(fromDate != 'SELECT' && toDate != 'SELECT'){
-                                              dental = dental.where((element) => DateTime.parse(element.date!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.date!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              dental = dental.where((element) => (element.date! == ' ')?false:DateTime.parse(element.date!).isAfter(DateFormat.yMd('en_US').parse(fromDate)) && DateTime.parse(element.date!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }else if(fromDate == 'SELECT' && toDate != 'SELECT'){
-                                              dental = dental.where((element) => DateTime.parse(element.date!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
+                                              dental = dental.where((element) => (element.date! == ' ')?false:DateTime.parse(element.date!).isBefore(DateFormat.yMd('en_US').parse(toDate))).toList();
                                             }
                                           });
                                         }, 
@@ -3087,7 +3298,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),
                                       const Spacer(),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -3097,18 +3308,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             loading();
                                             var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager6));
                                             await FileSaver.instance.saveFile('Dental', exported, "csv");
+                                            allActivity('Exported Dental to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
                                             "EXPORT TO CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 20,),
                                       SizedBox(
-                                        width: size.width * .09,
+                                        width: size.width * .07,
                                         height: 30,
                                         child: ElevatedButton(
                                           style: ButtonStyle(
@@ -3125,7 +3337,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           child: Text(
                                             "Add New Data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                            ),
+                                          ),
+                                        )
+                                      ),
+                                      const SizedBox(width: 20,),
+                                      SizedBox(
+                                        width: size.width * .07,
+                                        height: 30,
+                                        child: ElevatedButton(
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                          ),
+                                          onPressed: (){
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context) => Import(index: 6, userAccount: widget.user,)
+                                            ).then((_) => setState((){
+                                              fetchDental();
+                                            }));
+                                          },
+                                          child: Text(
+                                            "IMPORT",
+                                            style: GoogleFonts.dosis(
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -3189,26 +3425,31 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           title: 'Relationship',
                                           field: 'relationship',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Patient',
                                           field: 'patient',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Clinic',
                                           field: 'clinic',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Classification',
                                           field: 'classification',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                         PlutoColumn(
                                           title: 'Date',
                                           field: 'date',
                                           type: PlutoColumnType.text(),
+                                          textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
                                       rows: dentalRow()

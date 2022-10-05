@@ -4,6 +4,7 @@ import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/admin.dart';
 import 'package:tibud_care_system/pages/dashboard.dart';
 import 'package:tibud_care_system/pages/member_information.dart';
+import 'package:tibud_care_system/pages/total_per_payroll.dart';
 import 'package:tibud_care_system/server/server.dart';
 import 'package:tibud_care_system/utils/constant.dart';
 
@@ -77,6 +78,7 @@ class _LoadingState extends State<Loading> {
     super.initState();
     Future.delayed(Duration(seconds: 2), () async {
       UserAccount user = await getUserAccount(widget.uname, widget.passwrd);
+      allActivity('user account log in', user.username!, user.password!, user.name!, user.idno!);
       members = await getAllMember();
       laboratory = await getAllLaboratory();
       accidents = await getAllAccidents();
@@ -154,6 +156,64 @@ class _LoadingforInfoPageState extends State<LoadingforInfoPage> {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 20,),
+            Text(
+              'Retrieving data. Please wait....',
+              style: GoogleFonts.dosis(
+                textStyle: TextStyle(
+                  fontSize: size.width * .015
+                )
+              ),
+            )
+          ],
+        )
+      ),
+    );
+  }
+}
+
+
+class LoadingToTotals extends StatefulWidget {
+  LoadingToTotals({super.key, required this.user});
+  UserAccount user;
+
+  @override
+  State<LoadingToTotals> createState() => _LoadingToTotalsState();
+}
+
+class _LoadingToTotalsState extends State<LoadingToTotals> {
+  List<String> list = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(seconds: 2), () async {
+      list = await getAllBranches();
+      navigate();
+    });
+  }
+
+  void navigate(){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => TotalPerPayroll(list: list, user: widget.user,)
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {

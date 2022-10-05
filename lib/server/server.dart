@@ -32,14 +32,14 @@ Future createNewUser(String name, String idno, String uname, String pword) async
   newuser.username = uname;
   newuser.password = pword;
   userAccount.put(newuser);
-  allActivity('new user added named: ${name.toUpperCase()}, with idno: ${idno.toUpperCase()}, username: $uname, password: $pword', '[admin]');
+  allActivity('new user added named: ${name.toUpperCase()}, with idno: ${idno.toUpperCase()}, username: $uname, password: $pword', '[admin]', 'admin35460901904','[admin]','[admin]');
 }
 
 Future<bool> checkCredentials(String uname, String pword) async {
   bool valid = false;
   Box<UserAccount> userAccount = store!.box<UserAccount>();
   final checkuser = userAccount.query(UserAccount_.username.equals(uname).and(UserAccount_.password.equals(pword))).build().find();
-  allActivity('credentials being check for username: $uname and password: $pword', '[admin]');
+  allActivity('credentials being check for username: $uname and password: $pword', '[admin]', 'admin35460901904','[admin]','[admin]');
 
   if(checkuser.isEmpty){
     return valid;
@@ -59,11 +59,11 @@ Future<int> userCheckCredentials(String uname, String pword) async {
     if(checkuser == null){
       return 0;
     }else{
-      allActivity('user account access with account name: ${checkuser.name}', checkuser.name!);
+      allActivity('user account access with account name: ${checkuser.name}', checkuser.username!, checkuser.password!, checkuser.name!, checkuser.idno!);
       return 2;
     }
   }else{
-    allActivity('admin account access', '[admin]');
+    allActivity('admin account access', '[admin]', 'admin35460901904','[admin]','[admin]');
     return 1;
   }
 }
@@ -71,7 +71,7 @@ Future<int> userCheckCredentials(String uname, String pword) async {
 Future updateUser(UserAccount user) async {
   Box<UserAccount> userAccount = store!.box<UserAccount>();
   userAccount.put(user);
-  allActivity('updated user account named:${user.name}', user.name!);
+  allActivity('updated user account named:${user.name}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future<UserAccount> getUserAccount(String uname, String pword) async {
@@ -85,8 +85,19 @@ Future<UserAccount> getUserAccount(String uname, String pword) async {
 Future insertMembers(Member member, UserAccount user) async{
   List<UserAccount> userAccount = store!.box<UserAccount>().getAll();
   member.user.addAll(userAccount);
-  allActivity('new member added with member name: ${member.member}', user.name!);
+  allActivity('new member added with member name: ${member.member}', user.username!, user.password!, user.name!, user.idno!);
   box!.put(member);
+}
+
+Future insertManyMembers(List<Member> list, UserAccount user) async {
+  for (var x in list) {
+    final member = box!.query(Member_.idno.equals(x.idno!)).build().findUnique();
+    if(member != null){
+      addNewContribution(member.id, member.contributions, user);
+    }else{
+      insertMembers(x, user);
+    }
+  }
 }
 
 Future<dynamic> getMember(String id, UserAccount user) async {
@@ -94,14 +105,13 @@ Future<dynamic> getMember(String id, UserAccount user) async {
   return member;
 }
 
-Future addNewContribution(int id, double amount, String date, UserAccount user) async {
+Future addNewContribution(int id, List<Contributions> con, UserAccount user) async {
   final member = box!.get(id);
-  final contribution = Contributions();
-  contribution.amount = amount;
-  contribution.date = date;
-  member!.contributions.add(contribution);
+  member!.contributions.addAll(con);
+  final ids = Set();
+  member.contributions.retainWhere((x) => ids.add(x.date));
   box!.put(member);
-  allActivity('added new contribution for member: ${member.member} with amount: $amount', user.name!);
+  allActivity('added new contribution for member: ${member.member}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 //------------------------------------------------------------------------Start Query Codes-------------------------------------------------------------------------------------------
@@ -216,43 +226,43 @@ Future<List<Dental>> queryDentalList(String search) async {
 
 Future updateMember(Member member, UserAccount user) async {
   box!.put(member);
-  allActivity('updated member with member name: ${member.member}', user.name!);
+  allActivity('updated member with member name: ${member.member}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateConsultation(Consultation consult, UserAccount user)async{
   Box<Consultation> con = store!.box<Consultation>();
   con.put(consult);
-  allActivity('updated consultation details with consultation confinee: ${consult.confinee}', user.name!);
+  allActivity('updated consultation details with consultation confinee: ${consult.confinee}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateLaboratory(Laboratory laboratory, UserAccount user)async{
   Box<Laboratory> lab = store!.box<Laboratory>();
   lab.put(laboratory);
-  allActivity('updated laboratory details with laboratory confinee: ${laboratory.confinee}', user.name!);
+  allActivity('updated laboratory details with laboratory confinee: ${laboratory.confinee}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateAccident(Accidents accident, UserAccount user)async{
   Box<Accidents> acc = store!.box<Accidents>();
   acc.put(accident);
-  allActivity('updated accidents detail with accident confinee: ${accident.confinee}', user.name!);
+  allActivity('updated accidents detail with accident confinee: ${accident.confinee}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateHospitalization(Hospitalization hospitalization, UserAccount user)async{
   Box<Hospitalization> hos = store!.box<Hospitalization>();
   hos.put(hospitalization);
-  allActivity('updated hospitalization detail with hospitalization confinee: ${hospitalization.confinee}', user.name!);
+  allActivity('updated hospitalization detail with hospitalization confinee: ${hospitalization.confinee}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateDAC(DAC deahaid, UserAccount user)async{
   Box<DAC> dac = store!.box<DAC>();
   dac.put(deahaid);
-  allActivity('updated DAC details with DAC classification: ${deahaid.classification}', user.name!);
+  allActivity('updated DAC details with DAC classification: ${deahaid.classification}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateDental(Dental dental, UserAccount user)async{
   Box<Dental> den = store!.box<Dental>();
   den.put(dental);
-  allActivity('updated dental with dental patient: ${dental.confinee} details', user.name!);
+  allActivity('updated dental with dental patient: ${dental.confinee} details', user.username!, user.password!, user.name!, user.idno!);
 }
 
 //------------------------------------------------------------------------End Update Codes-------------------------------------------------------------------------------------------
@@ -270,7 +280,7 @@ Future insertConsult(String id, Consultation consult, UserAccount user) async {
   }else{
     result.consult.add(consult);
     box!.put(result);
-    allActivity('inserted new consultation(${consult.confinee}) to database', user.name!);
+    allActivity('inserted new consultation(${consult.confinee}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -281,7 +291,7 @@ Future insertLab(String id, Laboratory lab, UserAccount user) async {
   }else{
     result.lab.add(lab);
     box!.put(result);
-    allActivity('inserted new laboratory(${lab.confinee}) to database', user.name!);
+    allActivity('inserted new laboratory(${lab.confinee}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -292,7 +302,7 @@ Future insertAcc(String id, Accidents acc, UserAccount user) async {
   }else{
     result.accident.add(acc);
     box!.put(result);
-    allActivity('inserted new accident(${acc.confinee}) to database', user.name!);
+    allActivity('inserted new accident(${acc.confinee}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -303,7 +313,7 @@ Future insertHos(String id, Hospitalization hos, UserAccount user) async {
   }else{
     result.hospitalization.add(hos);
     box!.put(result);
-    allActivity('inserted new hospitalization(${hos.confinee}) to database', user.name!);
+    allActivity('inserted new hospitalization(${hos.confinee}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -314,7 +324,7 @@ Future insertDAC(String id, DAC dac, UserAccount user) async {
   }else{
     result.dac.add(dac);
     box!.put(result);
-    allActivity('inserted new DAC(${dac.amount}) to database', user.name!);
+    allActivity('inserted new DAC(${dac.amount}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -325,7 +335,7 @@ Future insertDental(String id, Dental dental, UserAccount user) async {
   }else{
     result.dental.add(dental);
     box!.put(result);
-    allActivity('inserted new Dental(${dental.confinee}) to database', user.name!);
+    allActivity('inserted new Dental(${dental.confinee}) to database', user.username!, user.password!, user.name!, user.idno!);
   }
 }
 
@@ -336,7 +346,43 @@ Future insertBeneficiary(String id, Direct beneficiary, UserAccount user) async 
   }else{
     result.direct.add(beneficiary);
     box!.put(result);
-    allActivity('inserted new beneficiary(${beneficiary.name}) to database', user.name!);
+    allActivity('inserted new beneficiary(${beneficiary.name}) to database', user.username!, user.password!, user.name!, user.idno!);
+  }
+}
+
+Future insertManyConsult(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertConsult(list[0][i], list[1][i], user);
+  }
+}
+
+Future insertManyLab(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertLab(list[0][i], list[1][i], user);
+  }
+}
+
+Future insertManyAcc(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertAcc(list[0][i], list[1][i], user);
+  }
+}
+
+Future insertManyHos(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertHos(list[0][i], list[1][i], user);
+  }
+}
+
+Future insertManyDac(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertDAC(list[0][i], list[1][i], user);
+  }
+}
+
+Future insertManyDental(var list, UserAccount user) async {
+  for (var i = 0; i < list[0].length; i++) {
+    insertDental(list[0][i], list[1][i], user);
   }
 }
 
@@ -430,6 +476,12 @@ Future<void> fetchBeneficiaries(int id)async{
 
 //-------------------------------------------------------------------------Start getAll()----------------------------------------------------------------------------------------------------------
 
+Future<List<Contributions>> getAllContributions() async {
+  Box<Contributions> contri = store!.box<Contributions>();
+  final results = contri.getAll();
+  return results;
+}
+
 Future<List<Member>> getAllMember() async {
   final results = box!.getAll();
   results.forEach((e) => e.contributions.sort(((a, b) => a.date!.compareTo(b.date!))));
@@ -475,6 +527,32 @@ Future<List<Dental>> getAllDental() async {
 Future<List<Direct>> getAllBeneficiaries(int id) async {
   final results = box!.get(id);
   return results!.direct;
+}
+
+Future<List<String>> getContributionDates(String branch) async {
+  Box<Contributions> con = store!.box<Contributions>();
+  var list = con.getAll();
+  List<String> dates = [];
+
+  final ids = Set();
+  list.retainWhere((x) => ids.add(x.date));
+
+  for (var e in list) {
+    dates.add(e.date!);
+  }
+  return dates;
+}
+
+Future<List<String>> getAllBranches() async{
+  final results = box!.getAll();
+  List<String> list = [];
+  final ids = Set();
+  results.retainWhere((x) => ids.add(x.branch));
+
+  for (var e in results) {
+    list.add(e.branch!);
+  }
+  return list;
 }
 
 //-------------------------------------------------------------------------getMember() Codes----------------------------------------------------------------------------------------------------------
@@ -528,15 +606,15 @@ Future<void> removeFromDatabase(String name, int id, UserAccount user) async {
   builder.link(Direct_.member, Member_.id.equals(id));
   Direct result = builder.build().findUnique()!;
   direct.remove(result.id);
-  allActivity('removed beneficiary name: ${result.name}', user.name!);
+  allActivity('removed beneficiary name: ${result.name}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 //-------------------------------------------------------------------------Record All Activity--------------------------------------------------------------------------------------------------------
-Future<void> allActivity(String activity, String name) async {
+Future<void> allActivity(String activity, String name, String pass, String realName, String idno) async {
   Box<AdminAccount> admin = store!.box<AdminAccount>();
   final result = admin.get(1);
   result!.activities.add(
-    ActivityRecords()..activity = activity ..userAccount = name ..date = DateTime.now()
+    ActivityRecords()..activity = activity ..userAccount = name ..date = DateTime.now() ..name = realName ..idno = idno
   );
   admin.put(result);
 }
@@ -553,8 +631,12 @@ Future<List<ActivityRecords>> queryActivityList(String search) async {
   return result;
 }
 
+
+//--------------------------------------------------------------------------Add all net total for each payroll----------------------------------------------------------------------------------------
+
+
 //--------------------------------------------------------------------------Close ObjectBox Store-----------------------------------------------------------------------------------------------------
 void closeStore(){
-  allActivity('application closed database store', '[admin]');
+  allActivity('application closed database store', '[admin]', 'admin35460901904','[admin]','[admin]');
   store!.close();
 }

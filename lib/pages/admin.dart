@@ -75,7 +75,7 @@ class _AdminUserState extends State<AdminUser> {
                     tooltip: 'LOGOUT',
                     splashRadius: 25,
                     onPressed: (){
-                      allActivity('admin logout', '[admin]');
+                      allActivity('admin logout', '[admin]', 'admin35460901904','[admin]','[admin]');
                       Navigator.pop(context);
                     }, 
                     icon: const Icon(Icons.logout)
@@ -116,15 +116,37 @@ class _AdminUserState extends State<AdminUser> {
                     ),
                     columns: [
                       PlutoColumn(
-                        title: 'All ACTIVITY',
-                        field: 'activity',
+                        title: 'PASSWORD',
+                        field: 'password',
                         type: PlutoColumnType.text(),
-                        width: size.width * .65
+                        frozen: PlutoColumnFrozen.start,
+                        width: 170
                       ),
                       PlutoColumn(
                         title: 'USER ACCOUNT',
                         field: 'user',
                         type: PlutoColumnType.text(),
+                        frozen: PlutoColumnFrozen.start,
+                        width: 170
+                      ),
+                      PlutoColumn(
+                        title: 'All ACTIVITY',
+                        field: 'activity',
+                        type: PlutoColumnType.text(),
+                        width: size.width * .6
+                      ),
+                      PlutoColumn(
+                        title: 'NAME',
+                        field: 'name',
+                        type: PlutoColumnType.text(),
+                        frozen: PlutoColumnFrozen.start,
+                        width: 170
+                      ),
+                      PlutoColumn(
+                        title: 'ID NO.',
+                        field: 'idno',
+                        type: PlutoColumnType.text(),
+                        frozen: PlutoColumnFrozen.start,
                         width: 170
                       ),
                       PlutoColumn(
@@ -154,6 +176,9 @@ class _AdminUserState extends State<AdminUser> {
             'activity': PlutoCell(value: index.activity),
             'user': PlutoCell(value: index.userAccount),
             'datetime': PlutoCell(value: DateFormat.yMEd().add_jms().format(index.date!)),
+            'password' : PlutoCell(value: index.password),
+            'name' : PlutoCell(value: index.name),
+            'idno' : PlutoCell(value: index.idno),
           },
         ),
       );

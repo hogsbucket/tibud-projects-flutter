@@ -24,36 +24,43 @@ List<PlutoColumn> dashCol(){
       title: 'NET TOTAL',
       field: 'net',
       type: PlutoColumnType.text(),
+      textAlign: PlutoColumnTextAlign.end,
       width: 150
     ),
     PlutoColumn(
-      title: 'No. months without contribution',
+      title: 'No. months w/o contribution',
       field: 'num',
       type: PlutoColumnType.text(),
+      textAlign: PlutoColumnTextAlign.end,
       width: 250
     ),
     PlutoColumn(
       title: 'Last Contribution',
       field: 'last',
       type: PlutoColumnType.text(),
+      textAlign: PlutoColumnTextAlign.end,
       width: 200
     ),
     PlutoColumn(
       title: 'DATE OF  HIRE',
       field: 'doh',
       type: PlutoColumnType.text(),
+      textAlign: PlutoColumnTextAlign.end,
       width: 200
     ),
     PlutoColumn(
       title: 'BRANCH',
       field: 'branch',
       type: PlutoColumnType.text(),
+      textAlign: PlutoColumnTextAlign.end,
       width: 200
     ),
   ];
 
   return col;
 }
+
+
 
 List<PlutoRow> beneficiaryList(){
   List<PlutoRow> rows = [];
@@ -275,13 +282,13 @@ List<PlutoRow> consultRow(){
     memNamesConsultation(index.id);
     String day;
     String day1;
-    if(index.doc != ''){
+    if(index.doc != '' && index.doc != ' '){
       DateTime date = DateTime.parse(index.doc!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
       day = index.doc!;
     }
-    if(index.dod != ''){
+    if(index.dod != '' && index.dod != ' '){
       DateTime date = DateTime.parse(index.dod!);
       day1 = DateFormat('MM/dd/y').format(date);
     }else{
@@ -315,7 +322,7 @@ List<PlutoRow> labRow(){
   for (var index in laboratory) {
     memNamesLab(index.id);
     String day;
-    if(index.dol != ''){
+    if(index.dol != '' && index.dol != ' '){
       DateTime date = DateTime.parse(index.dol!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
@@ -346,13 +353,13 @@ List<PlutoRow> accRow(){
     memNamesAcc(index.id);
     String day;
     String day1;
-    if(index.doc != ''){
+    if(index.doc != '' && index.doc != ' '){
       DateTime date = DateTime.parse(index.doc!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
       day = index.doc!;
     }
-    if(index.dod != ''){
+    if(index.dod != '' && index.dod != ' '){
       DateTime date = DateTime.parse(index.dod!);
       day1 = DateFormat('MM/dd/y').format(date);
     }else{
@@ -386,13 +393,13 @@ List<PlutoRow> hosRow(){
     memNamesHos(index.id);
     String day;
     String day1;
-    if(index.doa != ''){
+    if(index.doa != '' && index.doa != ' '){
       DateTime date = DateTime.parse(index.doa!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
       day = index.doa!;
     }
-    if(index.dod != ''){
+    if(index.dod != '' && index.dod != ' '){
       DateTime date = DateTime.parse(index.dod!);
       day1 = DateFormat('MM/dd/y').format(date);
     }else{
@@ -425,7 +432,7 @@ List<PlutoRow> dacRow(){
   for (var index in dac) {
     memNamesDAC(index.id);
     String day;
-    if(index.dod != ''){
+    if(index.dod != '' && index.dod != ' '){
       DateTime date = DateTime.parse(index.dod!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
@@ -452,7 +459,7 @@ List<PlutoRow> dentalRow(){
   for (var index in dental) {
     memNamesDental(index.id);
     String day;
-    if(index.date != ''){
+    if(index.date != '' && index.date != ' '){
       DateTime date = DateTime.parse(index.date!);
       day = DateFormat('MM/dd/y').format(date);
     }else{
@@ -467,7 +474,7 @@ List<PlutoRow> dentalRow(){
           'patient': PlutoCell(value: index.confinee),
           'clinic': PlutoCell(value: index.clinic),
           'classification': PlutoCell(value: index.classification),
-          'date': PlutoCell(value: index.date),
+          'date': PlutoCell(value: day),
         },
       ),
     );

@@ -1,4 +1,6 @@
 
+import 'dart:isolate';
+
 import 'package:tibud_care_system/model/model.dart';
 
 String username = '';
@@ -32,8 +34,17 @@ var beneficaryName;
 var beneficiaryRelation;
 var beneficiaryAge;
 var beneficiaryRole;
+var dates = [];
 
+String branch = '';
 bool addChecker = false;
+
+class RequiredArgs {
+  late final SendPort sendPort;
+  late String? path;
+
+  RequiredArgs(this.path, this.sendPort);
+}
 
 // Future<void> excelLabRead(String path) async {
 //   List<String> list = path.split('\n');

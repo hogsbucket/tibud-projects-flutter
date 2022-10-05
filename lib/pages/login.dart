@@ -50,7 +50,6 @@ class _LoginState extends State<Login> {
         builder: (context) => Loading(uname: username, passwrd: password,)
       ),
     );
-    allActivity('user account log in', username);
     user.text = '';
   }
 
@@ -61,7 +60,7 @@ class _LoginState extends State<Login> {
         builder: (context) => const LoadForAdmin()
       ),
     );
-    allActivity('admin log in', '[admin]');
+    allActivity('admin log in', '[admin]', 'admin35460901904','[admin]','[admin]');
     user.text = '';
   }
   
@@ -175,7 +174,7 @@ class _LoginState extends State<Login> {
                                 decoration: InputDecoration(
                                   labelText: 'Username',
                                   labelStyle: GoogleFonts.dosis(
-                                    textStyle: TextStyle(fontSize: size.width * .009, color: Colors.green.shade900)
+                                    textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                   ),
                                 ),
                               ),
@@ -220,11 +219,6 @@ class _LoginState extends State<Login> {
                               child: ElevatedButton(
                                 style: ButtonStyle(
                                   backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50.0),
-                                    )
-                                  )
                                 ),
                                 onPressed: () async {
                                   int credentials = await userCheckCredentials(username, password);
@@ -244,7 +238,7 @@ class _LoginState extends State<Login> {
                                           )
                                       ),
                                     );
-                                    allActivity('access denied: invalid username or password', user.text);
+                                    allActivity('access denied: invalid username or password', user.text, password, ' ', ' ');
                                   }
                                 },
                                 child: Text(
@@ -366,7 +360,7 @@ class _LoginState extends State<Login> {
                                           border: const OutlineInputBorder(),
                                           labelText: 'Name',
                                           labelStyle: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900)
+                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                           ),
                                         ),
                                       )
@@ -381,7 +375,7 @@ class _LoginState extends State<Login> {
                                           border: const OutlineInputBorder(),
                                           labelText: 'ID No.',
                                           labelStyle: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900)
+                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                           ),
                                         ),
                                       )
@@ -404,7 +398,7 @@ class _LoginState extends State<Login> {
                                       border: const OutlineInputBorder(),
                                       labelText: 'Username',
                                       labelStyle: GoogleFonts.dosis(
-                                        textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900)
+                                        textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                       ),
                                     ),
                                   )
@@ -431,7 +425,7 @@ class _LoginState extends State<Login> {
                                           border: const OutlineInputBorder(),
                                           labelText: 'Password',
                                           labelStyle: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900)
+                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                           ),
                                         ),
                                       )
@@ -447,7 +441,7 @@ class _LoginState extends State<Login> {
                                           border: const OutlineInputBorder(),
                                           labelText: 'Confirm',
                                           labelStyle: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900)
+                                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
                                           ),
                                         ),
                                       )
@@ -497,11 +491,6 @@ class _LoginState extends State<Login> {
                                       child: ElevatedButton(
                                         style: ButtonStyle(
                                           backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                            RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(50.0),
-                                            )
-                                          )
                                         ),
                                         onPressed: () async {
                                           if(name2.text.isNotEmpty && idno2.text.isNotEmpty && uname2.text.isNotEmpty && passwrd2.text.isNotEmpty){
@@ -520,17 +509,16 @@ class _LoginState extends State<Login> {
                                               }else{
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
-                                                    backgroundColor: Colors.grey.shade300,
                                                     content: 
                                                       Text(
                                                         'USERNAME and PASSWORD already in used.',
                                                         style: GoogleFonts.dosis(
-                                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.white)
+                                                          textStyle: TextStyle(fontSize: size.width * .02,  fontWeight: FontWeight.bold, color: Colors.red.shade900)
                                                         ), 
                                                       )
                                                   ),
                                                 );
-                                                allActivity('access denied: username and password already in used.', uname2.text);
+                                                allActivity('access denied: username and password already in used.', uname2.text, passwrd2.text, ' ', ' ');
                                               }
                                             }else{
                                               ScaffoldMessenger.of(context).showSnackBar(
@@ -539,12 +527,12 @@ class _LoginState extends State<Login> {
                                                     Text(
                                                       'Password does not match',
                                                       style: GoogleFonts.dosis(
-                                                        textStyle: TextStyle(fontSize: size.width * .015, color: Colors.white)
+                                                        textStyle: TextStyle(fontSize: size.width * .02,  fontWeight: FontWeight.bold, color: Colors.red.shade900)
                                                       ), 
                                                     )
                                                 ),
                                               );
-                                              allActivity('password does not match: ${passwrd2.text} != ${confirm2.text}', uname2.text);
+                                              allActivity('password does not match: ${passwrd2.text} != ${confirm2.text}', uname2.text, passwrd2.text, ' ', ' ');
                                             }
                                           }
                                           
@@ -630,7 +618,7 @@ class _PasswordFormState extends State<PasswordForm> {
             ),
             labelText: 'Password',
             labelStyle: GoogleFonts.dosis(
-              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.green.shade900)
+              textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
             ),
           ),
         )

@@ -532,7 +532,7 @@ final _entities = <ModelEntity>[
   ModelEntity(
       id: const IdUid(14, 145755932700576630),
       name: 'ActivityRecords',
-      lastPropertyId: const IdUid(4, 6181265665279674857),
+      lastPropertyId: const IdUid(7, 5449779218053302892),
       flags: 0,
       properties: <ModelProperty>[
         ModelProperty(
@@ -554,6 +554,21 @@ final _entities = <ModelEntity>[
             id: const IdUid(4, 6181265665279674857),
             name: 'date',
             type: 10,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(5, 2557018019044419821),
+            name: 'password',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(6, 815139220074509474),
+            name: 'name',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(7, 5449779218053302892),
+            name: 'idno',
+            type: 9,
             flags: 0)
       ],
       relations: <ModelRelation>[],
@@ -1242,11 +1257,21 @@ ModelDefinition getObjectBoxModel() {
           final userAccountOffset = object.userAccount == null
               ? null
               : fbb.writeString(object.userAccount!);
-          fbb.startTable(5);
+          final passwordOffset = object.password == null
+              ? null
+              : fbb.writeString(object.password!);
+          final nameOffset =
+              object.name == null ? null : fbb.writeString(object.name!);
+          final idnoOffset =
+              object.idno == null ? null : fbb.writeString(object.idno!);
+          fbb.startTable(8);
           fbb.addInt64(0, object.id);
           fbb.addOffset(1, activityOffset);
           fbb.addOffset(2, userAccountOffset);
           fbb.addInt64(3, object.date?.millisecondsSinceEpoch);
+          fbb.addOffset(4, passwordOffset);
+          fbb.addOffset(5, nameOffset);
+          fbb.addOffset(6, idnoOffset);
           fbb.finish(fbb.endTable());
           return object.id;
         },
@@ -1263,7 +1288,13 @@ ModelDefinition getObjectBoxModel() {
                 .vTableGetNullable(buffer, rootOffset, 8)
             ..date = dateValue == null
                 ? null
-                : DateTime.fromMillisecondsSinceEpoch(dateValue);
+                : DateTime.fromMillisecondsSinceEpoch(dateValue)
+            ..password = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 12)
+            ..name = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 14)
+            ..idno = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 16);
 
           return object;
         })
@@ -1625,4 +1656,16 @@ class ActivityRecords_ {
   /// see [ActivityRecords.date]
   static final date =
       QueryIntegerProperty<ActivityRecords>(_entities[11].properties[3]);
+
+  /// see [ActivityRecords.password]
+  static final password =
+      QueryStringProperty<ActivityRecords>(_entities[11].properties[4]);
+
+  /// see [ActivityRecords.name]
+  static final name =
+      QueryStringProperty<ActivityRecords>(_entities[11].properties[5]);
+
+  /// see [ActivityRecords.idno]
+  static final idno =
+      QueryStringProperty<ActivityRecords>(_entities[11].properties[6]);
 }
