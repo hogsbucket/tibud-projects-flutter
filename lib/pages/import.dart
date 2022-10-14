@@ -47,45 +47,6 @@ class _ImportState extends State<Import> {
     Navigator.pop(context);
   }
 
-  // Future<void> excelRead(RequiredArgs requiredArgs) async {
-  //   String date = '';
-  //   final SendPort sendPort = requiredArgs.sendPort;
-  //   List<String> list = requiredArgs.path!.split('\n');
-  //   try{
-  //     for (var e in list) {
-  //       var file = e.replaceAll(RegExp(r'\\'), '\/');
-  //       var bytes = File(file).readAsBytesSync();
-  //       var excel = Excel.decodeBytes(bytes);
-  //       for (var table in excel.tables.keys) {
-  //         for (var row in excel.tables[table]!.rows) {
-  //           if(row[0] != null){
-  //             if(row[0]!.value.toString().toUpperCase() == 'ID NO.'){
-  //               date = row[2]!.value;
-  //             }else{
-  //               final mem = await getMember(row[0] == null ? ' ':row[0]!.value, user);
-  //               if(mem != null){
-  //                 addNewContribution(mem.id, (row[2] == null || row[2]!.value is String)? 0 : row[2]!.value.toDouble(), date, user);
-  //               }else{
-  //                 Member member = Member();
-  //                 member.idno = row[0] == null ? ' ':row[0]!.value;
-  //                 member.member = row[1] == null ? ' ':row[1]!.value;
-  //                 member.dateOfHire = row[3] == null ? ' ':row[3]!.value;
-  //                 member.branch = row[4] == null ? ' ':row[4]!.value;
-  //                 member.contributions.add(Contributions()..amount = (row[2] == null || row[2]!.value is String)? 0 : row[2]!.value.toDouble() ..date = date);
-  //                 insertMembers(member, user);
-  //               }
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //     members = await getAllMember();
-  //     sendPort.send("end");
-  //   }catch(e){
-  //     sendPort.send("error");
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     if(hasNoData){
@@ -239,8 +200,11 @@ class _ImportState extends State<Import> {
               }
 
               var resp = await receivePort.first;
-
-              if(resp != 'error'){
+              List<String> error = [];
+              if(resp is String){
+                error = resp.split('/');
+              }
+              if(error.isEmpty){
                 switch (widget.index) {
                   case 0:
                     insertManyMembers(resp, user);
@@ -280,7 +244,7 @@ class _ImportState extends State<Import> {
                         title: Text('ERROR!',style: GoogleFonts.dosis(
                           textStyle: const TextStyle(fontSize: 25, color: Colors.red, letterSpacing: 5)
                         ),),
-                        content: Text('Please follow the format for importing.', style: GoogleFonts.dosis(
+                        content: Text('Please follow the format for importing.\nRow: ${error[0]}\nID No:${error[1]}\nSheet Name: ${error[2]}', style: GoogleFonts.dosis(
                           textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                         ),),
                         actions: [
@@ -342,6 +306,7 @@ void import1(RequiredArgs requiredArgs){
   final SendPort sendPort = requiredArgs.sendPort;
   List<String> list = requiredArgs.path!.split('\n');
   List<Member> memberlist = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -350,7 +315,9 @@ void import1(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() == 'ID NO.'){
+              DateTime date1 = DateTime.parse(row[2]!.value);
               date = row[2]!.value;
             }else{
               final mem = memberlist.indexWhere((element) => element.idno == row[0]!.value);
@@ -359,9 +326,9 @@ void import1(RequiredArgs requiredArgs){
               }else{
                 Member member = Member();
                 member.idno = row[0] == null ? ' ':row[0]!.value;
-                member.member = row[1] == null ? ' ':row[1]!.value;
+                member.member = row[1] == null ? ' ':row[1]!.value.toString().toUpperCase();
                 member.dateOfHire = row[3] == null ? ' ':row[3]!.value;
-                member.branch = row[4] == null ? ' ':row[4]!.value;
+                member.branch = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
                 member.contributions.add(Contributions()..amount = (row[2] == null || row[2]!.value is String)? 0 : row[2]!.value.toDouble() ..date = date);
                 memberlist.add(member);
               }
@@ -372,7 +339,7 @@ void import1(RequiredArgs requiredArgs){
     }
     sendPort.send(memberlist);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -381,6 +348,7 @@ void import2(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<Consultation> consultationList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -389,12 +357,15 @@ void import2(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final consult = Consultation();
-              consult.confinee = row[3] == null ? ' ':row[3]!.value;
-              consult.relationship = row[2] == null ? ' ':row[2]!.value;
-              consult.hospital = row[4] == null ? ' ':row[4]!.value;
+              DateTime date1 = row[5] == null ? DateTime.now(): DateTime.parse(row[5]!.value);
+              DateTime date2 = row[6] == null ? DateTime.now(): DateTime.parse(row[6]!.value);
+              consult.confinee = row[3] == null ? ' ':row[3]!.value.toString().toUpperCase();
+              consult.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
+              consult.hospital = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
               consult.doc = row[5] == null ? ' ':row[5]!.value;
               consult.dod = row[6] == null ? ' ':row[6]!.value;
               consult.labBasic = (row[7] == null || row[7]!.value is String)? 0 : row[7]!.value.toDouble();
@@ -411,7 +382,7 @@ void import2(RequiredArgs requiredArgs){
     var result = [ids, consultationList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -420,6 +391,7 @@ void import3(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<Laboratory> laboratoryList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -428,12 +400,14 @@ void import3(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final lab = Laboratory();
-              lab.relationship = row[2] == null ? ' ':row[2]!.value;
-              lab.confinee = row[3] == null ? ' ':row[3]!.value;
-              lab.hospital = row[4] == null ? ' ':row[4]!.value;
+              DateTime date1 = row[5] == null ? DateTime.now(): DateTime.parse(row[5]!.value);
+              lab.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
+              lab.confinee = row[3] == null ? ' ':row[3]!.value.toString().toUpperCase();
+              lab.hospital = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
               lab.dol = row[5] == null ? ' ':row[5]!.value;
               lab.labBasic = (row[6] == null || row[6]!.value is String)? 0 : row[6]!.value.toDouble();
               lab.labClaims = (row[7] == null || row[7]!.value is String)? 0 : row[7]!.value.toDouble();
@@ -446,7 +420,7 @@ void import3(RequiredArgs requiredArgs){
     var result = [ids, laboratoryList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -455,6 +429,7 @@ void import4(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<Accidents> accidentsList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -463,12 +438,15 @@ void import4(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final acc = Accidents();
-              acc.relationship = row[2] == null ? ' ':row[2]!.value;
-              acc.confinee = row[3] == null ? ' ':row[3]!.value;
-              acc.hospital = row[4] == null ? ' ':row[4]!.value;
+              DateTime date1 = row[5] == null ? DateTime.now(): DateTime.parse(row[5]!.value);
+              DateTime date2 = row[6] == null ? DateTime.now(): DateTime.parse(row[6]!.value);
+              acc.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
+              acc.confinee = row[3] == null ? ' ':row[3]!.value.toString().toUpperCase();
+              acc.hospital = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
               acc.doc = row[5] == null ? ' ':row[5]!.value;
               acc.dod = row[6] == null ? ' ':row[6]!.value;
               acc.accBasic = (row[7] == null || row[7]!.value is String)? 0 : row[7]!.value.toDouble();
@@ -484,7 +462,7 @@ void import4(RequiredArgs requiredArgs){
     var result = [ids, accidentsList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -493,6 +471,7 @@ void import5(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<Hospitalization> hospitalizationList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -501,12 +480,15 @@ void import5(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final hos = Hospitalization();
-              hos.relationship = row[2] == null ? ' ':row[2]!.value;
-              hos.confinee = row[3] == null ? ' ':row[3]!.value;
-              hos.hospital = row[4] == null ? ' ':row[4]!.value;
+              DateTime date1 = row[5] == null ? DateTime.now(): DateTime.parse(row[5]!.value);
+              DateTime date2 = row[6] == null ? DateTime.now(): DateTime.parse(row[6]!.value);
+              hos.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
+              hos.confinee = row[3] == null ? ' ':row[3]!.value.toString().toUpperCase();
+              hos.hospital = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
               hos.doa = row[5] == null ? ' ':row[5]!.value;
               hos.dod = row[6] == null ? ' ':row[6]!.value;
               hos.hosBasic = (row[7] == null || row[7]!.value is String)? 0 : row[7]!.value.toDouble();
@@ -522,7 +504,7 @@ void import5(RequiredArgs requiredArgs){
     var result = [ids, hospitalizationList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -531,6 +513,7 @@ void import6(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<DAC> dacList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -539,10 +522,12 @@ void import6(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final dac = DAC();
-              dac.relationship = row[2] == null ? ' ':row[2]!.value;
+              DateTime date1 = row[5] == null ? DateTime.now(): DateTime.parse(row[5]!.value);
+              dac.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
               dac.classification = row[3] == null ? ' ':row[3]!.value;
               dac.amount = (row[4] == null || row[4]!.value is String)? 0 : row[4]!.value.toDouble();
               dac.dod = row[5] == null ? ' ':row[5]!.value;
@@ -555,7 +540,7 @@ void import6(RequiredArgs requiredArgs){
     var result = [ids, dacList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 
@@ -564,6 +549,7 @@ void import7(RequiredArgs requiredArgs){
   List<String> list = requiredArgs.path!.split('\n');
   List<Dental> dentalList = [];
   List<String> ids = [];
+  String error = '';
   try{
     for (var e in list) {
       var file = e.replaceAll(RegExp(r'\\'), '\/');
@@ -572,12 +558,14 @@ void import7(RequiredArgs requiredArgs){
       for (var table in excel.tables.keys) {
         for (var row in excel.tables[table]!.rows) {
           if(row[0] != null){
+            error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() != 'ID NO.'){
               ids.add(row[0]!.value);
               final dental = Dental();
-              dental.relationship = row[2] == null ? ' ':row[2]!.value;
-              dental.confinee = row[3] == null ? ' ':row[3]!.value;
-              dental.clinic = row[4] == null ? ' ':row[4]!.value;
+              DateTime date2 = row[6] == null ? DateTime.now(): DateTime.parse(row[6]!.value);
+              dental.relationship = row[2] == null ? ' ':row[2]!.value.toString().toUpperCase();
+              dental.confinee = row[3] == null ? ' ':row[3]!.value.toString().toUpperCase();
+              dental.clinic = row[4] == null ? ' ':row[4]!.value.toString().toUpperCase();
               dental.classification = row[5] == null ? ' ':row[5]!.value;
               dental.date = row[6] == null ? ' ':row[6]!.value;
               dentalList.add(dental);
@@ -589,7 +577,7 @@ void import7(RequiredArgs requiredArgs){
     var result = [ids, dentalList];
     sendPort.send(result);
   }catch(e){
-    sendPort.send('error');
+    sendPort.send(error);
   }
 }
 

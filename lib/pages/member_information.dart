@@ -669,12 +669,6 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                   member.branch = branch.text.toUpperCase();
                                   member.dateOfHire = doh.text.toUpperCase();
                                   updateMember(member, widget.user);
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute<void>(
-                                      builder: (context) => Loading(uname: widget.user.username!, passwrd: widget.user.password!)
-                                    ),
-                                  );
                                 },
                                 child: Text(
                                   "SAVE",
@@ -772,6 +766,14 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                 child: PlutoGrid(
                                   key: keyDashboard1,
                                   onLoaded: (event) => stateManager = event.stateManager,
+                                  onChanged: (event){
+                                    switch (event.columnIdx) {
+                                      case 0:member.contributions[event.rowIdx!].date = DateFormat.yMd('en_US').parse(event.value).toString().toUpperCase();break;
+                                      case 1:member.contributions[event.rowIdx!].amount = double.parse(event.value);break;
+                                      default:
+                                    }
+                                    updateContribution(member.contributions[event.rowIdx!], member, widget.user);
+                                  },
                                   configuration: PlutoGridConfiguration(
                                     style: PlutoGridStyleConfig(
                                       activatedBorderColor: Colors.green.shade900,

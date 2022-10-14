@@ -225,8 +225,19 @@ Future<List<Dental>> queryDentalList(String search) async {
 //------------------------------------------------------------------------Start Update Codes-------------------------------------------------------------------------------------------
 
 Future updateMember(Member member, UserAccount user) async {
-  box!.put(member);
+  var result = box!.get(member.id);
+  result = member;
+  box!.put(result);
   allActivity('updated member with member name: ${member.member}', user.username!, user.password!, user.name!, user.idno!);
+}
+
+Future updateContribution(Contributions con, Member member, UserAccount user) async {
+  Box<Contributions> contri = store!.box<Contributions>();
+  var result = contri.get(con.id);
+  result!.date = con.date;
+  result.amount = con.amount;
+  contri.put(result);
+  allActivity('updated contribution of member name: ${member.member}', user.username!, user.password!, user.name!, user.idno!);
 }
 
 Future updateConsultation(Consultation consult, UserAccount user)async{

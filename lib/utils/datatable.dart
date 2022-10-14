@@ -216,7 +216,7 @@ List<PlutoRow> infoDashRow(Member mem){
     String day;
     if(x.date != ' '){
       DateTime date = DateTime.parse(x.date!);
-      day = DateFormat.yMMMMd().format(date);
+      day = DateFormat('MM/dd/y').format(date);
     }else{
       day = x.date!;
     }
@@ -256,25 +256,6 @@ List<PlutoRow> dashRow(){
   }
   return rows;
 }
-
-// Map<String, PlutoCell> dashcells(Member mem){
-//   Map<String, PlutoCell> cells = {};
-//   final id = {'id': PlutoCell(value: mem.idno)};
-//   final name = {'name': PlutoCell(value: mem.member)};
-//   final branch = {'branch': PlutoCell(value: mem.branch)};
-//   double total =  (mem.contributions != []) ? mem.contributions.fold(0, (sum, contribution) => sum.toDouble() + contribution.amount!) : 0;
-//   final net = {'net': PlutoCell(value: total.toStringAsFixed(0))};
-//   cells.addAll(id);
-//   cells.addAll(name);
-//   cells.addAll(net);
-//   cells.addAll(branch);
-  // for (var i = 0; i < mem.contributions.length; i++) {
-  //   cells.addAll(
-  //     {'date$i': PlutoCell(value: mem.contributions[i].amount!.toStringAsFixed(0))}
-  //   );
-  // }
-//   return cells;
-// }
 
 List<PlutoRow> consultRow(){
   List<PlutoRow> rows = [];
