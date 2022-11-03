@@ -205,10 +205,10 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
                       gridBorderColor: Colors.green.shade900,
                       rowHeight: 25,
                       columnHeight: 30,
-                      columnTextStyle: GoogleFonts.dosis(
+                      columnTextStyle: GoogleFonts.zenMaruGothic(
                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                       ),
-                      cellTextStyle: GoogleFonts.dosis(
+                      cellTextStyle: GoogleFonts.zenMaruGothic(
                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                       ),
                     )
@@ -237,10 +237,10 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
     for (var x in members) {
       if(x.branch == branch){
         for (var e in x.contributions) {
-          dates.add(e.date);
+          if(!dates.contains(e.date)){
+            dates.add(e.date);
+          }
         }
-        final ids = Set();
-        dates.retainWhere((x) => ids.add(x));
       }
     }
     for (var i = 0; i < dates.length; i++) {
@@ -257,7 +257,7 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
       }
       list.add(
         PlutoColumnGroup(
-          title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+          title: NumberFormat('#,###,##0.00#', 'en_US').format(total).toString(),
           fields: ['dates$i'],
         )
       );
@@ -301,7 +301,7 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
           title: day,
           field: 'dates$i',
           type: PlutoColumnType.text(),
-          width: 150,
+          width: 200,
           
         ),
       );

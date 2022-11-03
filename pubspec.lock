@@ -436,6 +436,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  number_to_words_english:
+    dependency: "direct main"
+    description:
+      name: number_to_words_english
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.2"
   objectbox:
     dependency: "direct main"
     description:
@@ -577,7 +584,7 @@ packages:
     source: hosted
     version: "1.5.1"
   printing:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: printing
       url: "https://pub.dartlang.org"

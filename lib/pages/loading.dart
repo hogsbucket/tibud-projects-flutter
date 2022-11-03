@@ -22,6 +22,8 @@ class _LoadForAdminState extends State<LoadForAdmin> {
     super.initState();
     Future.delayed(Duration(seconds: 2), () async {
       activities = await getAllActivity();
+      allBranch = await getAllBranches();
+      disabledBranch = await getAllDisabledBranch();
       navigate();
     });
   }

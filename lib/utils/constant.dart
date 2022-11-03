@@ -15,6 +15,8 @@ List<DAC> dac = [];
 List<Dental> dental = [];
 List<Direct> ben = [];
 List<ActivityRecords> activities = [];
+List<String> disabledBranch = [];
+List<String> allBranch = [];
 
 UserAccount? user;
 var memNameConsult;

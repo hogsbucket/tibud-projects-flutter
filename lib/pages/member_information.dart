@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/add_dialog.dart';
 import 'package:tibud_care_system/pages/loading.dart';
+import 'package:tibud_care_system/pages/print.dart';
 import 'package:tibud_care_system/server/server.dart';
 import 'package:tibud_care_system/utils/constant.dart';
 import 'package:tibud_care_system/utils/datatable.dart';
@@ -283,11 +284,11 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                        vertical: 10
+                        vertical: 5
                       ),
                       child: Text(
                         'NET TOTAL: ${total.toStringAsFixed(2)}',
-                        style: GoogleFonts.dosis(
+                        style: GoogleFonts.zenMaruGothic(
                           textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
                         ),
                       ),
@@ -623,6 +624,26 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                         ),
                       ),
                     ),
+                    TextButton(
+                      style: ButtonStyle(
+                        surfaceTintColor: MaterialStateProperty.all(Colors.transparent),
+                        overlayColor: MaterialStateProperty.all(Colors.transparent),
+                      ),
+                      onPressed: (){
+                        Navigator.push(
+                          context, 
+                          MaterialPageRoute<void>(
+                            builder: (context) => Printing(name: member.member!,)
+                          ),
+                        );
+                      }, 
+                      child: Text(
+                        "+ Generate LOG",
+                        style: GoogleFonts.dosis(
+                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
+                        ),
+                      ),
+                    ),
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -780,10 +801,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -797,7 +818,9 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Amount',
                                       field: 'amount',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                   ],
                                   rows: infoDashRow(member)
@@ -815,10 +838,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -852,17 +875,23 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Basic',
                                       field: 'basic',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Claims',
                                       field: 'claims',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Balance',
                                       field: 'balance',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Classification',
@@ -895,10 +924,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -927,17 +956,23 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Basic',
                                       field: 'basic',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Claims',
                                       field: 'claims',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Balance',
                                       field: 'balance',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                   ],
                                   rows: memberLabRow(member.id)
@@ -955,10 +990,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -992,17 +1027,23 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Basic',
                                       field: 'basic',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Claims',
                                       field: 'claims',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Balance',
                                       field: 'balance',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Classification',
@@ -1030,10 +1071,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -1067,17 +1108,23 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Basic',
                                       field: 'basic',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Claims',
                                       field: 'claims',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Balance',
                                       field: 'balance',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'Classification',
@@ -1105,10 +1152,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )
@@ -1127,7 +1174,9 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                     PlutoColumn(
                                       title: 'Amount',
                                       field: 'amount',
-                                      type: PlutoColumnType.text(),
+                                      type: PlutoColumnType.number(
+                                        format: '#,###,##0.00'
+                                      ),
                                     ),
                                     PlutoColumn(
                                       title: 'DOD',
@@ -1150,10 +1199,10 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                       activatedColor: Colors.green.shade100,
                                       rowHeight: 25,
                                       columnHeight: 30,
-                                      columnTextStyle: GoogleFonts.dosis(
+                                      columnTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                       ),
-                                      cellTextStyle: GoogleFonts.dosis(
+                                      cellTextStyle: GoogleFonts.zenMaruGothic(
                                         textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                       ),
                                     )

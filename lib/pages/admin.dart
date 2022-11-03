@@ -20,9 +20,16 @@ class _AdminUserState extends State<AdminUser> {
   bool searchIcon = true;
   late PlutoGridStateManager stateManager;
   static GlobalKey<FormState> key = GlobalKey<FormState>();
+  List<bool>? _isChecked;
 
   Future<void> filterList(String search) async {
     activities = await queryActivityList(search);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isChecked = List<bool>.filled(allBranch.length, false);
   }
 
   @override
@@ -65,11 +72,83 @@ class _AdminUserState extends State<AdminUser> {
                 width: size.width,
                 height: 50,
                 child: ListTile(
-                  title: Text(
-                    'ADMINISTRATOR',
-                    style: GoogleFonts.dosis(
-                      textStyle: TextStyle(fontSize: size.width * .025, color: Colors.black, letterSpacing: 5)
-                    ),
+                  title: Row(
+                    children: [
+                      Text(
+                        'ADMINISTRATOR',
+                        style: GoogleFonts.dosis(
+                          textStyle: TextStyle(fontSize: size.width * .025, color: Colors.black, letterSpacing: 5)
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: (){
+                           showDialog(
+                            context: context, 
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                'Branches',
+                                style: GoogleFonts.dosis(
+                                  textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                ),
+                              ),
+                              content: Builder(
+                                builder: (context){
+                                  return SizedBox(
+                                    height: 500,
+                                    width: 350,
+                                    child: ListView.builder(
+                                      itemCount: allBranch.length,
+                                      itemBuilder: (context, index) {
+                                        if(disabledBranch.contains(allBranch[index])){
+                                          _isChecked![index] = true;
+                                          return CheckboxListTile(
+                                            selected: _isChecked![index],
+                                            value: _isChecked![index], 
+                                            onChanged: ((value) {
+                                              setState(() {
+                                                _isChecked![index] = value!;
+                                              });
+                                            }),
+                                            title: Text(allBranch[index]),
+                                          );
+                                        }else{
+                                          _isChecked![index] = false;
+                                          return CheckboxListTile(
+                                            selected: _isChecked![index],
+                                            value: _isChecked![index], 
+                                            onChanged: ((value) {
+                                              setState(() {
+                                                _isChecked![index] = value!;
+                                              });
+                                            }),
+                                            title: Text(allBranch[index]),
+                                          );
+                                        }
+                                      }
+                                    ),
+                                  );
+                                }
+                              ),
+                              actions: [
+                                TextButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, child: Text(
+                                  'Close',
+                                  style: GoogleFonts.dosis(),
+                                  )),
+                                TextButton(onPressed: (){
+                                  Navigator.pop(context);
+                                }, child: Text(
+                                  'Save',
+                                  style: GoogleFonts.dosis(),
+                                )),
+                              ],
+                            )
+                          );
+                        }, 
+                        child: Text('All Branches')
+                      )
+                    ],
                   ),
                   trailing: IconButton(
                     tooltip: 'LOGOUT',

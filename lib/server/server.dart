@@ -90,12 +90,12 @@ Future insertMembers(Member member, UserAccount user) async{
 }
 
 Future insertManyMembers(List<Member> list, UserAccount user) async {
-  for (var x in list) {
-    final member = box!.query(Member_.idno.equals(x.idno!)).build().findUnique();
+  for (var i = 0; i < list.length; i++) {
+    final member = box!.query(Member_.idno.equals(list[i].idno!).and(Member_.branch.equals(list[i].branch!))).build().findUnique();
     if(member != null){
-      addNewContribution(member.id, member.contributions, user);
+      addNewContribution(member.id, list[i].contributions, user);
     }else{
-      insertMembers(x, user);
+      insertMembers(list[i], user);
     }
   }
 }
@@ -162,9 +162,9 @@ Future<List<Laboratory>> queryLabList(String search) async {
 
 Future<List<Accidents>> queryAccList(String search) async {
   Box<Accidents> acc = store!.box<Accidents>();
-  var results = acc.query(Accidents_.hospital.contains(search).orAny([Accidents_.dod.contains(search), Accidents_.doc.contains(search), Accidents_.classification.contains(search), Accidents_.remarks.contains(search)])).build().find();
+  var results = acc.query(Accidents_.hospital.contains(search).orAny([Accidents_.relationship.contains(search) ,Accidents_.dod.contains(search), Accidents_.doc.contains(search), Accidents_.classification.contains(search), Accidents_.remarks.contains(search)])).build().find();
   QueryBuilder<Accidents> builder = acc.query();
-  builder.backlinkMany(Member_.accident, Member_.member.contains(search).or(Member_.idno.contains(search)));
+  builder.backlinkMany(Member_.accident, Member_.member.contains(search).orAny([Member_.idno.contains(search), Member_.branch.contains(search)]));
   var results2 = builder.build().find();
   results.addAll(results2);
   if(search == ''){
@@ -177,9 +177,9 @@ Future<List<Accidents>> queryAccList(String search) async {
 
 Future<List<Hospitalization>> queryHosList(String search) async {
   Box<Hospitalization> hos = store!.box<Hospitalization>();
-  var results = hos.query(Hospitalization_.hospital.contains(search).orAny([Hospitalization_.dod.contains(search), Hospitalization_.doa.contains(search), Hospitalization_.classification.contains(search), Hospitalization_.remarks.contains(search)])).build().find();
+  var results = hos.query(Hospitalization_.hospital.contains(search).orAny([Hospitalization_.relationship.contains(search), Hospitalization_.dod.contains(search), Hospitalization_.doa.contains(search), Hospitalization_.classification.contains(search), Hospitalization_.remarks.contains(search)])).build().find();
   QueryBuilder<Hospitalization> builder = hos.query();
-  builder.backlinkMany(Member_.hospitalization, Member_.member.contains(search).or(Member_.idno.contains(search)));
+  builder.backlinkMany(Member_.hospitalization, Member_.member.contains(search).orAny([Member_.idno.contains(search), Member_.branch.contains(search)]));
   var results2 = builder.build().find();
   results.addAll(results2);
   if(search == ''){
@@ -192,9 +192,9 @@ Future<List<Hospitalization>> queryHosList(String search) async {
 
 Future<List<DAC>> queryDACList(String search) async {
   Box<DAC> dac = store!.box<DAC>();
-  var results = dac.query(DAC_.classification.contains(search).orAny([DAC_.dod.contains(search)])).build().find();
+  var results = dac.query(DAC_.classification.contains(search).orAny([DAC_.relationship.contains(search) ,DAC_.dod.contains(search)])).build().find();
   QueryBuilder<DAC> builder = dac.query();
-  builder.backlinkMany(Member_.dac, Member_.member.contains(search).or(Member_.idno.contains(search)));
+  builder.backlinkMany(Member_.dac, Member_.member.contains(search).orAny([Member_.idno.contains(search), Member_.branch.contains(search)]));
   var results2 = builder.build().find();
   results.addAll(results2);
   if(search == ''){
@@ -207,9 +207,9 @@ Future<List<DAC>> queryDACList(String search) async {
 
 Future<List<Dental>> queryDentalList(String search) async {
   Box<Dental> den = store!.box<Dental>();
-  var results = den.query(Dental_.classification.contains(search).orAny([Dental_.clinic.contains(search), Dental_.date.contains(search)])).build().find();
+  var results = den.query(Dental_.classification.contains(search).orAny([Dental_.relationship.contains(search), Dental_.clinic.contains(search), Dental_.date.contains(search)])).build().find();
   QueryBuilder<Dental> builder = den.query();  
-  builder.backlinkMany(Member_.dental, Member_.member.contains(search).or(Member_.idno.contains(search)));
+  builder.backlinkMany(Member_.dental, Member_.member.contains(search).orAny([Member_.idno.contains(search), Member_.branch.contains(search)]));
   var results2 = builder.build().find();
   results.addAll(results2);
   if(search == ''){
@@ -276,6 +276,18 @@ Future updateDental(Dental dental, UserAccount user)async{
   allActivity('updated dental with dental patient: ${dental.confinee} details', user.username!, user.password!, user.name!, user.idno!);
 }
 
+Future updateDisabledBranch(List<String> list, UserAccount user) async {
+  Box<DisabledBranch> dbranch = store!.box<DisabledBranch>();
+  dbranch.removeAll();
+  var result;
+  for (var e in list) {
+    result.add(
+      DisabledBranch()..branch = e ..display = false
+    );
+  }
+  dbranch.put(result);
+}
+
 //------------------------------------------------------------------------End Update Codes-------------------------------------------------------------------------------------------
 
 
@@ -285,7 +297,7 @@ Future updateDental(Dental dental, UserAccount user)async{
 
 //------------------------------------------------------------------Start Insert Codes to Database--------------------------------------------------------------------------
 Future insertConsult(String id, Consultation consult, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -296,7 +308,7 @@ Future insertConsult(String id, Consultation consult, UserAccount user) async {
 }
 
 Future insertLab(String id, Laboratory lab, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -307,7 +319,7 @@ Future insertLab(String id, Laboratory lab, UserAccount user) async {
 }
 
 Future insertAcc(String id, Accidents acc, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -318,7 +330,7 @@ Future insertAcc(String id, Accidents acc, UserAccount user) async {
 }
 
 Future insertHos(String id, Hospitalization hos, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -329,7 +341,7 @@ Future insertHos(String id, Hospitalization hos, UserAccount user) async {
 }
 
 Future insertDAC(String id, DAC dac, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -340,7 +352,7 @@ Future insertDAC(String id, DAC dac, UserAccount user) async {
 }
 
 Future insertDental(String id, Dental dental, UserAccount user) async {
-  final result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  final result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -351,7 +363,7 @@ Future insertDental(String id, Dental dental, UserAccount user) async {
 }
 
 Future insertBeneficiary(String id, Direct beneficiary, UserAccount user) async {
-  var result = box!.query(Member_.idno.equals(id)).build().findUnique();
+  var result = box!.query(Member_.idno.equals(id)).build().findFirst();
   if(result == null){
     return 'No Data Found';
   }else{
@@ -566,6 +578,18 @@ Future<List<String>> getAllBranches() async{
   return list;
 }
 
+Future<List<String>> getAllDisabledBranch() async {
+  Box<DisabledBranch> dbranch = store!.box<DisabledBranch>();
+  var results = dbranch.getAll();
+  List<String> list = [];
+
+  for (var e in results) {
+    list.add(e.branch!);
+  }
+
+  return list;
+}
+
 //-------------------------------------------------------------------------getMember() Codes----------------------------------------------------------------------------------------------------------
 
 Future<void> getMemConsult(int id) async {
@@ -625,7 +649,7 @@ Future<void> allActivity(String activity, String name, String pass, String realN
   Box<AdminAccount> admin = store!.box<AdminAccount>();
   final result = admin.get(1);
   result!.activities.add(
-    ActivityRecords()..activity = activity ..userAccount = name ..date = DateTime.now() ..name = realName ..idno = idno
+    ActivityRecords()..activity = activity ..userAccount = name ..date = DateTime.now() ..name = realName ..idno = idno ..password = pass
   );
   admin.put(result);
 }

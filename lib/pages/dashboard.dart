@@ -130,6 +130,16 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
     dental= await queryDentalList(search);
   }
 
+  Future<void> filterAllList() async {
+    members = await queryDashList('');
+    consultation = await queryConsultList('');
+    laboratory = await queryLabList('');
+    accidents = await queryAccList('');
+    hospitalization = await queryHosList('');
+    dac = await queryDACList('');
+    dental= await queryDentalList('');
+  }
+
   Future<void> loading() async {
     showDialog(
       context: context,
@@ -290,6 +300,17 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                 color: Colors.green.shade900,
                 child: TabBar(
                   onTap: (value){
+                    switch(value){
+                      case 0: filterList('');break;
+                      case 2: filterConsultList('');break;
+                      case 3: filterLabList('');break;
+                      case 4: filterAccList('');break;
+                      case 5: filterHosList('');break;
+                      case 6: filterAccList('');break;
+                      case 7: filterDentalList('');break;
+                      default:break;
+                    }
+                    searchText.text = '';
                     controller.reset();
                     controller.forward();
                     resetDatePicker();
@@ -682,9 +703,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "ADD NEW DATA",
+                                            "Add new data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -706,9 +727,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             );
                                           },
                                           child: Text(
-                                            "VIEW FULL DATA",
+                                            "View full data",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -728,9 +749,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Dashboard to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -752,9 +773,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
                                           ),
                                         )
@@ -779,18 +800,30 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       },
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'net' || column.field == 'con' || column.field == 'lab' || column.field == 'acc' || column.field == 'hos' || column.field == 'dac' || column.field == 'dental') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -1338,7 +1371,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1353,7 +1386,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1361,7 +1394,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1376,7 +1409,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1384,7 +1417,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1411,9 +1444,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1429,9 +1462,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),    
@@ -1450,7 +1483,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Consultation to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -1498,7 +1531,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -1516,6 +1549,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager1 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },              
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -1537,16 +1571,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'basic' || column.field == 'claims' || column.field == 'balance') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -1598,19 +1643,25 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
@@ -1632,7 +1683,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
-                                      rows: consultRow()
+                                      rows: consultRow(),
+                                      columnGroups: dataColGroupConsult(),
                                     ),
                                   )
                                 ),
@@ -1733,7 +1785,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1748,7 +1800,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1756,7 +1808,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1771,7 +1823,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1779,7 +1831,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -1806,9 +1858,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -1824,9 +1876,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ), 
@@ -1845,7 +1897,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Laboratory to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -1893,7 +1945,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -1911,6 +1963,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager2 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -1928,16 +1981,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'basic' || column.field == 'claims' || column.field == 'balance') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -1983,23 +2047,30 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                       ],
-                                      rows: labRow()
+                                      rows: labRow(),
+                                      columnGroups: dataColGroupLab(),
                                     ),
                                   )
                                 ),
@@ -2100,7 +2171,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2115,7 +2186,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2123,7 +2194,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2138,7 +2209,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2146,7 +2217,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2167,9 +2238,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2185,9 +2256,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ), 
@@ -2206,7 +2277,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Accidents to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -2254,7 +2325,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -2272,6 +2343,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager3 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -2292,16 +2364,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'basic' || column.field == 'claims' || column.field == 'balance') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -2353,19 +2436,25 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
@@ -2381,7 +2470,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
-                                      rows: accRow()
+                                      rows: accRow(),
+                                      columnGroups: dataColGroupAcc(),
                                     ),
                                   )
                                 ),
@@ -2482,7 +2572,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2497,7 +2587,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2505,7 +2595,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2520,7 +2610,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2528,7 +2618,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2549,9 +2639,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2567,9 +2657,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2588,7 +2678,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Hospitalization to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -2636,7 +2726,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -2654,6 +2744,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager4 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -2674,16 +2765,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'basic' || column.field == 'claims' || column.field == 'balance') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -2735,19 +2837,25 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         PlutoColumn(
                                           title: 'Basic',
                                           field: 'basic',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Claims',
                                           field: 'claims',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
                                           title: 'Balance',
                                           field: 'balance',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
@@ -2763,7 +2871,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
-                                      rows: hosRow()
+                                      rows: hosRow(),
+                                      columnGroups: dataColGroupHos(),
                                     ),
                                   )
                                 ),
@@ -2864,7 +2973,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2879,7 +2988,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2887,7 +2996,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2902,7 +3011,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2910,7 +3019,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -2931,9 +3040,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2949,9 +3058,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -2970,7 +3079,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported DAC to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -3018,7 +3127,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -3036,6 +3145,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager5 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -3051,16 +3161,27 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            if (column.field == 'amount') {
+                                              return resolver<PlutoFilterTypeGreaterThan>() as PlutoFilterType;
+                                            }
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -3094,7 +3215,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         PlutoColumn(
                                           title: 'Amount',
                                           field: 'amount',
-                                          type: PlutoColumnType.text(),
+                                          type: PlutoColumnType.number(
+                                            format: '###,##0.00'
+                                          ),
                                           textAlign: PlutoColumnTextAlign.end,
                                         ),
                                         PlutoColumn(
@@ -3104,7 +3227,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
-                                      rows: dacRow()
+                                      rows: dacRow(),
+                                      columnGroups: dataColGroupDac(),
                                     ),
                                   )
                                 ),
@@ -3205,7 +3329,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'FROM: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -3220,7 +3344,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           fromDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -3228,7 +3352,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         'TO: ',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -3243,7 +3367,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         child: Text(
                                           toDate,
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -3251,7 +3375,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       Text(
                                         ':',
                                         style: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .009, color: Colors.black)
+                                          textStyle: TextStyle(fontSize: size.width * .007, color: Colors.black)
                                         ),
                                       ),
                                       const SizedBox(width: 10,),
@@ -3272,9 +3396,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "SET RANGE",
+                                          "Set Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -3290,9 +3414,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           });
                                         }, 
                                         child: Text(
-                                          "RESET RANGE",
+                                          "Reset Range",
                                           style: GoogleFonts.dosis(
-                                            textStyle: TextStyle(fontSize: size.width * .009, color: Colors.white)
+                                            textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                           ),
                                         ),
                                       ),
@@ -3311,7 +3435,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             allActivity('Exported Dental to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
                                           },
                                           child: Text(
-                                            "EXPORT TO CSV",
+                                            "Export to CSV",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -3359,7 +3483,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             }));
                                           },
                                           child: Text(
-                                            "IMPORT",
+                                            "Import",
                                             style: GoogleFonts.dosis(
                                               textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
                                             ),
@@ -3377,6 +3501,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     child: PlutoGrid(
                                       onLoaded: (PlutoGridOnLoadedEvent e){
                                         stateManager6 = e.stateManager;
+                                        e.stateManager.setShowColumnFilter(true);
                                       },
                                       onChanged: (event){
                                         switch (event.columnIdx) {
@@ -3393,16 +3518,24 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         });
                                       },
                                       configuration: PlutoGridConfiguration(
+                                        columnFilter: PlutoGridColumnFilterConfig(
+                                          filters: const [
+                                            ...FilterHelper.defaultFilters,
+                                          ],
+                                          resolveDefaultColumnFilter: (column, resolver) {
+                                            return resolver<PlutoFilterTypeContains>() as PlutoFilterType;
+                                          }
+                                        ),
                                         style: PlutoGridStyleConfig(
                                           activatedBorderColor: Colors.green.shade900,
                                           activatedColor: Colors.green.shade100,
                                           gridBorderColor: Colors.green.shade900,
                                           rowHeight: 25,
                                           columnHeight: 30,
-                                          columnTextStyle: GoogleFonts.dosis(
+                                          columnTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black)
                                           ),
-                                          cellTextStyle: GoogleFonts.dosis(
+                                          cellTextStyle: GoogleFonts.zenMaruGothic(
                                             textStyle: const TextStyle(fontSize: 15, color: Colors.black)
                                           ),
                                         )
@@ -3452,7 +3585,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           textAlign: PlutoColumnTextAlign.center,
                                         ),
                                       ],
-                                      rows: dentalRow()
+                                      rows: dentalRow(),
                                     ),
                                   )
                                 ),

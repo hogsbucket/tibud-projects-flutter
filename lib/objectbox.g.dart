@@ -572,6 +572,30 @@ final _entities = <ModelEntity>[
             flags: 0)
       ],
       relations: <ModelRelation>[],
+      backlinks: <ModelBacklink>[]),
+  ModelEntity(
+      id: const IdUid(15, 898849308259173324),
+      name: 'DisabledBranch',
+      lastPropertyId: const IdUid(3, 7839441539070703624),
+      flags: 0,
+      properties: <ModelProperty>[
+        ModelProperty(
+            id: const IdUid(1, 8634240440851727431),
+            name: 'id',
+            type: 6,
+            flags: 1),
+        ModelProperty(
+            id: const IdUid(2, 1430731834578612124),
+            name: 'branch',
+            type: 9,
+            flags: 0),
+        ModelProperty(
+            id: const IdUid(3, 7839441539070703624),
+            name: 'display',
+            type: 1,
+            flags: 0)
+      ],
+      relations: <ModelRelation>[],
       backlinks: <ModelBacklink>[])
 ];
 
@@ -595,7 +619,7 @@ Future<Store> openStore(
 ModelDefinition getObjectBoxModel() {
   final model = ModelInfo(
       entities: _entities,
-      lastEntityId: const IdUid(14, 145755932700576630),
+      lastEntityId: const IdUid(15, 898849308259173324),
       lastIndexId: const IdUid(2, 5631215408572733555),
       lastRelationId: const IdUid(11, 6162217503267888750),
       lastSequenceId: const IdUid(0, 0),
@@ -1297,6 +1321,37 @@ ModelDefinition getObjectBoxModel() {
                 .vTableGetNullable(buffer, rootOffset, 16);
 
           return object;
+        }),
+    DisabledBranch: EntityDefinition<DisabledBranch>(
+        model: _entities[12],
+        toOneRelations: (DisabledBranch object) => [],
+        toManyRelations: (DisabledBranch object) => {},
+        getId: (DisabledBranch object) => object.id,
+        setId: (DisabledBranch object, int id) {
+          object.id = id;
+        },
+        objectToFB: (DisabledBranch object, fb.Builder fbb) {
+          final branchOffset =
+              object.branch == null ? null : fbb.writeString(object.branch!);
+          fbb.startTable(4);
+          fbb.addInt64(0, object.id);
+          fbb.addOffset(1, branchOffset);
+          fbb.addBool(2, object.display);
+          fbb.finish(fbb.endTable());
+          return object.id;
+        },
+        objectFromFB: (Store store, ByteData fbData) {
+          final buffer = fb.BufferContext(fbData);
+          final rootOffset = buffer.derefObject(0);
+
+          final object = DisabledBranch()
+            ..id = const fb.Int64Reader().vTableGet(buffer, rootOffset, 4, 0)
+            ..branch = const fb.StringReader(asciiOptimization: true)
+                .vTableGetNullable(buffer, rootOffset, 6)
+            ..display =
+                const fb.BoolReader().vTableGetNullable(buffer, rootOffset, 8);
+
+          return object;
         })
   };
 
@@ -1668,4 +1723,19 @@ class ActivityRecords_ {
   /// see [ActivityRecords.idno]
   static final idno =
       QueryStringProperty<ActivityRecords>(_entities[11].properties[6]);
+}
+
+/// [DisabledBranch] entity fields to define ObjectBox queries.
+class DisabledBranch_ {
+  /// see [DisabledBranch.id]
+  static final id =
+      QueryIntegerProperty<DisabledBranch>(_entities[12].properties[0]);
+
+  /// see [DisabledBranch.branch]
+  static final branch =
+      QueryStringProperty<DisabledBranch>(_entities[12].properties[1]);
+
+  /// see [DisabledBranch.display]
+  static final display =
+      QueryBooleanProperty<DisabledBranch>(_entities[12].properties[2]);
 }

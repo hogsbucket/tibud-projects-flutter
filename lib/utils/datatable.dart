@@ -23,16 +23,53 @@ List<PlutoColumn> dashCol(){
     PlutoColumn(
       title: 'NET TOTAL',
       field: 'net',
-      type: PlutoColumnType.text(),
+      type: PlutoColumnType.number(
+        format: '###,##0.00'
+      ),
       textAlign: PlutoColumnTextAlign.end,
       width: 150
     ),
     PlutoColumn(
-      title: 'No. months w/o contribution',
-      field: 'num',
-      type: PlutoColumnType.text(),
+      title: 'Consultation',
+      field: 'con',
+      type: PlutoColumnType.number(),
       textAlign: PlutoColumnTextAlign.end,
-      width: 250
+      width: 150
+    ),
+    PlutoColumn(
+      title: 'Laboratory',
+      field: 'lab',
+      type: PlutoColumnType.number(),
+      textAlign: PlutoColumnTextAlign.end,
+      width: 150
+    ),
+    PlutoColumn(
+      title: 'Accidents',
+      field: 'acc',
+      type: PlutoColumnType.number(),
+      textAlign: PlutoColumnTextAlign.end,
+      width: 150
+    ),
+    PlutoColumn(
+      title: 'Hospitalization',
+      field: 'hos',
+      type: PlutoColumnType.number(),
+      textAlign: PlutoColumnTextAlign.end,
+      width: 150
+    ),
+    PlutoColumn(
+      title: 'DAC',
+      field: 'dac',
+      type: PlutoColumnType.number(),
+      textAlign: PlutoColumnTextAlign.end,
+      width: 150
+    ),
+    PlutoColumn(
+      title: 'Dental',
+      field: 'dental',
+      type: PlutoColumnType.number(),
+      textAlign: PlutoColumnTextAlign.end,
+      width: 150
     ),
     PlutoColumn(
       title: 'Last Contribution',
@@ -59,8 +96,6 @@ List<PlutoColumn> dashCol(){
 
   return col;
 }
-
-
 
 List<PlutoRow> beneficiaryList(){
   List<PlutoRow> rows = [];
@@ -224,7 +259,8 @@ List<PlutoRow> infoDashRow(Member mem){
       PlutoRow(
         cells:{
           'date': PlutoCell(value: day),
-          'amount': PlutoCell(value: x.amount),        }
+          'amount': PlutoCell(value: x.amount),
+        }
       ),
     );
   }
@@ -239,7 +275,6 @@ List<PlutoRow> dashRow(){
     String day;
     DateTime date = DateTime.parse(mem.contributions[mem.contributions.length - 1].date!);
     day = DateFormat.yMMMMd().format(date);
-    final difference = (DateTime.now().difference(date).inDays / 31).floor();
     rows.add(
       PlutoRow(
         cells:{
@@ -248,7 +283,12 @@ List<PlutoRow> dashRow(){
           'doh': PlutoCell(value: mem.dateOfHire),
           'branch': PlutoCell(value: mem.branch),
           'net': PlutoCell(value: total.toStringAsFixed(0)),
-          'num': PlutoCell(value: difference),
+          'con': PlutoCell(value: mem.consult.length),
+          'lab': PlutoCell(value: mem.lab.length),
+          'acc': PlutoCell(value: mem.accident.length),
+          'hos': PlutoCell(value: mem.hospitalization.length),
+          'dac': PlutoCell(value: mem.dac.length),
+          'dental': PlutoCell(value: mem.dental.length),
           'last': PlutoCell(value: day),
         }
       ),
@@ -298,6 +338,17 @@ List<PlutoRow> consultRow(){
   return rows;
 }
 
+List<PlutoColumnGroup> dataColGroupConsult(){
+  double total = consultation.fold(0, (previousValue, element) => previousValue + element.labClaims!);
+  List<PlutoColumnGroup> list  = [
+    PlutoColumnGroup(
+      title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+      fields: ['claims'],
+    )
+  ];
+  return list;
+}
+
 List<PlutoRow> labRow(){
   List<PlutoRow> rows = [];
   for (var index in laboratory) {
@@ -326,6 +377,17 @@ List<PlutoRow> labRow(){
     );
   }
   return rows;
+}
+
+List<PlutoColumnGroup> dataColGroupLab(){
+  double total = laboratory.fold(0, (previousValue, element) => previousValue + element.labClaims!);
+  List<PlutoColumnGroup> list  = [
+    PlutoColumnGroup(
+      title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+      fields: ['claims'],
+    )
+  ];
+  return list;
 }
 
 List<PlutoRow> accRow(){
@@ -368,6 +430,17 @@ List<PlutoRow> accRow(){
   return rows;
 }
 
+List<PlutoColumnGroup> dataColGroupAcc(){
+  double total = accidents.fold(0, (previousValue, element) => previousValue + element.accClaims!);
+  List<PlutoColumnGroup> list  = [
+    PlutoColumnGroup(
+      title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+      fields: ['claims'],
+    )
+  ];
+  return list;
+}
+
 List<PlutoRow> hosRow(){
   List<PlutoRow> rows = [];
   for (var index in hospitalization) {
@@ -408,6 +481,17 @@ List<PlutoRow> hosRow(){
   return rows;
 }
 
+List<PlutoColumnGroup> dataColGroupHos(){
+  double total = hospitalization.fold(0, (previousValue, element) => previousValue + element.hosClaims!);
+  List<PlutoColumnGroup> list  = [
+    PlutoColumnGroup(
+      title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+      fields: ['claims'],
+    )
+  ];
+  return list;
+}
+
 List<PlutoRow> dacRow(){
   List<PlutoRow> rows = [];
   for (var index in dac) {
@@ -433,6 +517,17 @@ List<PlutoRow> dacRow(){
     );
   }
   return rows;
+}
+
+List<PlutoColumnGroup> dataColGroupDac(){
+  double total = dac.fold(0, (previousValue, element) => previousValue + element.amount!);
+  List<PlutoColumnGroup> list  = [
+    PlutoColumnGroup(
+      title: NumberFormat('#,###,###.00#', 'en_US').format(total).toString(),
+      fields: ['amount'],
+    )
+  ];
+  return list;
 }
 
 List<PlutoRow> dentalRow(){

@@ -162,3 +162,10 @@ class Dental{
   @Backlink()
   final denMembers = ToMany<Member>();
 }
+
+@Entity()
+class DisabledBranch{
+  int id = 0;
+  String? branch;
+  bool? display = false;
+}

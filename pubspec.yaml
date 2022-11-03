@@ -32,6 +32,8 @@ dependencies:
   pluto_grid_export: ^1.0.3
   file_saver: ^0.1.1
   intl: ^0.17.0
+  printing: ^5.9.3
+  number_to_words_english: ^2.0.2
 
 
 dev_dependencies:

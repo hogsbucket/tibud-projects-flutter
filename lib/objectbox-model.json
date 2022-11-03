@@ -550,9 +550,33 @@
         }
       ],
       "relations": []
+    },
+    {
+      "id": "15:898849308259173324",
+      "lastPropertyId": "3:7839441539070703624",
+      "name": "DisabledBranch",
+      "properties": [
+        {
+          "id": "1:8634240440851727431",
+          "name": "id",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:1430731834578612124",
+          "name": "branch",
+          "type": 9
+        },
+        {
+          "id": "3:7839441539070703624",
+          "name": "display",
+          "type": 1
+        }
+      ],
+      "relations": []
     }
   ],
-  "lastEntityId": "14:145755932700576630",
+  "lastEntityId": "15:898849308259173324",
   "lastIndexId": "2:5631215408572733555",
   "lastRelationId": "11:6162217503267888750",
   "lastSequenceId": "0:0",
