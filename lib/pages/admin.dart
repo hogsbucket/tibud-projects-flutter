@@ -80,74 +80,63 @@ class _AdminUserState extends State<AdminUser> {
                           textStyle: TextStyle(fontSize: size.width * .025, color: Colors.black, letterSpacing: 5)
                         ),
                       ),
-                      TextButton(
-                        onPressed: (){
-                           showDialog(
-                            context: context, 
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                'Branches',
-                                style: GoogleFonts.dosis(
-                                  textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
-                                ),
-                              ),
-                              content: Builder(
-                                builder: (context){
-                                  return SizedBox(
-                                    height: 500,
-                                    width: 350,
-                                    child: ListView.builder(
-                                      itemCount: allBranch.length,
-                                      itemBuilder: (context, index) {
-                                        if(disabledBranch.contains(allBranch[index])){
-                                          _isChecked![index] = true;
-                                          return CheckboxListTile(
-                                            selected: _isChecked![index],
-                                            value: _isChecked![index], 
-                                            onChanged: ((value) {
-                                              setState(() {
-                                                _isChecked![index] = value!;
-                                              });
-                                            }),
-                                            title: Text(allBranch[index]),
-                                          );
-                                        }else{
-                                          _isChecked![index] = false;
-                                          return CheckboxListTile(
-                                            selected: _isChecked![index],
-                                            value: _isChecked![index], 
-                                            onChanged: ((value) {
-                                              setState(() {
-                                                _isChecked![index] = value!;
-                                              });
-                                            }),
-                                            title: Text(allBranch[index]),
-                                          );
-                                        }
-                                      }
-                                    ),
-                                  );
-                                }
-                              ),
-                              actions: [
-                                TextButton(onPressed: (){
-                                  Navigator.pop(context);
-                                }, child: Text(
-                                  'Close',
-                                  style: GoogleFonts.dosis(),
-                                  )),
-                                TextButton(onPressed: (){
-                                  Navigator.pop(context);
-                                }, child: Text(
-                                  'Save',
-                                  style: GoogleFonts.dosis(),
-                                )),
-                              ],
-                            )
-                          );
-                        }, 
-                        child: Text('All Branches')
-                      )
+                      // TextButton(
+                      //   onPressed: (){
+                      //      showDialog(
+                      //       context: context, 
+                      //       builder: (context) => AlertDialog(
+                      //         title: Text(
+                      //           'Branches',
+                      //           style: GoogleFonts.dosis(
+                      //             textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                      //           ),
+                      //         ),
+                      //         content: StatefulBuilder(
+                      //           builder: (context, setState) {
+                      //             return SizedBox(
+                      //               height: 500,
+                      //               width: 350,
+                      //               child: ListView.builder(
+                      //                 itemCount: allBranch.length,
+                      //                 itemBuilder: (context, index) {
+                      //                   if(disabledBranch.contains(allBranch[index])){
+                      //                     _isChecked![index] = true;
+                      //                     return CheckboxListTile(
+                      //                       value: _isChecked![index], 
+                      //                       onChanged: (value) => setState(() => _isChecked![index] = value!,),
+                      //                       title: Text(allBranch[index]),
+                      //                     );
+                      //                   }else{
+                      //                     return CheckboxListTile(
+                      //                       value: _isChecked![index], 
+                      //                       onChanged: (value) => setState(() => _isChecked![index] = value!,),
+                      //                       title: Text(allBranch[index]),
+                      //                     );
+                      //                   }
+                      //                 }
+                      //               )
+                      //             );
+                      //           },
+                      //         ),
+                      //         actions: [
+                      //           TextButton(onPressed: (){
+                      //             Navigator.pop(context);
+                      //           }, child: Text(
+                      //             'Close',
+                      //             style: GoogleFonts.dosis(),
+                      //             )),
+                      //           TextButton(onPressed: (){
+                      //             Navigator.pop(context);
+                      //           }, child: Text(
+                      //             'Save',
+                      //             style: GoogleFonts.dosis(),
+                      //           )),
+                      //         ],
+                      //       )
+                      //     );
+                      //   }, 
+                      //   child: Text('All Branches')
+                      // )
                     ],
                   ),
                   trailing: IconButton(

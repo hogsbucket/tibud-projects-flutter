@@ -6,7 +6,6 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/add_dialog.dart';
 import 'package:tibud_care_system/pages/loading.dart';
-import 'package:tibud_care_system/pages/print.dart';
 import 'package:tibud_care_system/server/server.dart';
 import 'package:tibud_care_system/utils/constant.dart';
 import 'package:tibud_care_system/utils/datatable.dart';
@@ -621,26 +620,6 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                           style: GoogleFonts.dosis(
                             textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
                           ),
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      style: ButtonStyle(
-                        surfaceTintColor: MaterialStateProperty.all(Colors.transparent),
-                        overlayColor: MaterialStateProperty.all(Colors.transparent),
-                      ),
-                      onPressed: (){
-                        Navigator.push(
-                          context, 
-                          MaterialPageRoute<void>(
-                            builder: (context) => Printing(name: member.member!,)
-                          ),
-                        );
-                      }, 
-                      child: Text(
-                        "+ Generate LOG",
-                        style: GoogleFonts.dosis(
-                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
                         ),
                       ),
                     ),

@@ -40,6 +40,8 @@ var dates = [];
 
 String branch = '';
 bool addChecker = false;
+String ophead = 'Mary Grace T. Sebua';
+String postingclerk = 'Jenny P. Palacios';
 
 class RequiredArgs {
   late final SendPort sendPort;

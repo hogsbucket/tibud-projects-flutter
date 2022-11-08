@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_saver/file_saver.dart';
@@ -12,10 +13,16 @@ import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/add_dialog.dart';
 import 'package:tibud_care_system/pages/import.dart';
 import 'package:tibud_care_system/pages/loading.dart';
+import 'package:tibud_care_system/pages/print_original.dart';
 import 'package:tibud_care_system/server/server.dart';
 import 'package:tibud_care_system/utils/constant.dart';
 import 'package:tibud_care_system/utils/datatable.dart';
 import 'package:tibud_care_system/utils/window_buttons.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import 'package:number_to_words_english/number_to_words_english.dart';
+
 class Dashboard extends StatefulWidget {
   Dashboard({Key? key, required this.user}) : super(key: key);
   UserAccount user;
@@ -56,7 +63,50 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
   late PlutoGridStateManager stateManager4;
   late PlutoGridStateManager stateManager5;
   late PlutoGridStateManager stateManager6;
-  
+
+  final operationHead = TextEditingController();
+  final postingClerk = TextEditingController();
+  final amount = TextEditingController();
+  final subjectOfHospitalization = TextEditingController();
+  final confinee = TextEditingController();
+  final notInTheListHospital = TextEditingController();
+  final formKey = GlobalKey<FormState>();
+  bool change = false;
+  bool hospitalTextField = false;
+  String dropdownvalue = 'BONTUYAN MEDICAL HOSPITAL, INC.';
+  var hospital = [   
+    'BONTUYAN MEDICAL HOSPITAL, INC.',
+    'CAINGLET MEDICAL HOSPITAL, INC.',
+    'CALUMPANG LAVELIA MEDICAL CENTER, INC.',
+    'DAVAO MEDIQUEST HOSPITAL, INC.',
+    'DR. LORENZO B. PRINCIPE CLINIC & DRUGSTORE, INC',
+    'DR. ROGELIO M. GARCIA MEMORIAL HOSPITAL',
+    'GENERAL SANTOS DOCTORS\' HOSPITAL',
+    'GENERAL MEDICAL HOSPITAL',
+    'GONZALES MARANAN MEDICAL CENTER INCORPORATED',
+    'HERAMIL HOSPITAL',
+    'HOWARD HUBBARD MEMORIAL HOSPITAL',
+    'J CARES OCCUPATIONAL HEALTH & MEDICAL CLINIC',
+    'MALTA MEDICAL CENTER, INC.',
+    'MedCORE HOSPITAL, INC.',
+    'MINDANAO MEDICAL CENTER, INC.',
+    'REYES EYE CLINIC',
+    'RIVERA MEDICAL CENTER, INC.',
+    'SOCKSARGEN COUNTY HOSPITAL',
+    'SOMOSO GENERAL HOSPITAL, INC.',
+    'DAVAO MEDICAL SCHOOL FOUNDATION HOSPITAL',
+    'ST. ELIZABETH HOSPITAL, INC.',
+    'BRENT HOSPITAL AND COLLEGES INCORPORATED',
+    'POLOMOLOK DIAGNOSTIC CENTER & PHARMACY INC.',
+    'MEDZONE DIAGNOSTIC CENTER',
+    'ADVENTIST MEDICAL CENTER OF ILIGAN-TUPI BRANCH',
+    'SOCOMEDECS HOSPITAL',
+    'GAGATAM CLINIC',
+    'SARANGANI BAY SPECIALIST MEDICAL CENTER',
+    'ST. JOHN OF THE CROSS HOSPITAL',
+    'OTHER',
+  ];
+
   late final AnimationController controller = AnimationController(
     duration: const Duration(milliseconds: 800),
     vsync: this,
@@ -183,6 +233,344 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
     );
   }
 
+  Future<void> printLOG(String name, String to, String amountInNum, String amountInWords, String dependent) async {
+    Size size = MediaQuery.of(context).size;
+    final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
+    final font = await PdfGoogleFonts.vollkornBold();
+    final font2 = await PdfGoogleFonts.newsreaderBold();
+    final font3 = await PdfGoogleFonts.newsreaderRegular();
+
+    pdf.addPage(
+      pw.Page(
+        pageTheme: const pw.PageTheme(
+          margin: pw.EdgeInsets.zero,
+        ),
+        build: (context) {
+          return pw.Column(
+            children: [
+              pw.Container(
+                width: double.infinity,
+                height: 90,
+              ),
+              pw.Text(
+                'LETTER OF GUARANTEE',
+                style: pw.TextStyle(
+                  font: font,
+                  fontSize: 20,
+                  letterSpacing: 2,
+                  wordSpacing: 3,
+                  color: PdfColors.white
+                ),
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.all(20),
+                  child:
+                   pw.RichText(
+                    text: pw.TextSpan(
+                      text: 'Date:   ',
+                      style: pw.TextStyle(
+                        font: font2,
+                        fontSize: 12,
+                        color: PdfColors.white
+                      ),
+                      children: [
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            DateFormat.yMMMMd().format(DateTime.now()),
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        )
+                      ],
+                    ),
+                  )
+                )
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.all(20),
+                  child: 
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      text: 'To                     :         ',
+                      style: pw.TextStyle(
+                        font: font2,
+                        fontSize: 12,
+                        color: PdfColors.white
+                      ),
+                      children: [
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            to,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        )
+                      ],
+                    ),
+                  )
+                )
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 20),
+                  child: 
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      text: 'Subject          :         ',
+                      style: pw.TextStyle(
+                        font: font2,
+                        fontSize: 12,
+                        color: PdfColors.white
+                      ),
+                      children: [
+                        pw.TextSpan(
+                          text: '', 
+                          style: pw.TextStyle(
+                            font: font2,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                      ],
+                    ),
+                  )
+                )
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 20, top: 50, bottom: 20, right: 20),
+                  child: pw.RichText(
+                    text: pw.TextSpan(
+                      text: '',
+                      style: pw.TextStyle(
+                        font: font3,
+                        fontSize: 12,
+                        lineSpacing: 10,
+                      ),
+                      children: [
+                        pw.TextSpan(
+                          text: 'This is to certify that   ',
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          ),
+                        ),
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            name,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        ),
+                        pw.TextSpan(
+                          text: '   is a bonafide member of  "TIBUD CARE".\nThe Cooperative Medical Fund System of Tibud Sa Katibawasan Multi-Purpose Cooperative. He or she entitled to a limit amounting  ', 
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            amountInWords,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        ),
+                        pw.TextSpan(
+                          text: '\n(P ', 
+                          style: pw.TextStyle(
+                            font: font,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            amountInNum,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        ),
+                        pw.TextSpan(
+                          text: ' ) pesos only.', 
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                      ],
+                    ),
+                  )
+                )
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 20, top: 10, bottom: 20, right: 20),
+                  child: 
+                  pw.RichText(
+                    text: pw.TextSpan(
+                      text: '',
+                      style: pw.TextStyle(
+                        font: font3,
+                        fontSize: 12,
+                        lineSpacing: 10,
+                      ),
+                      children: [
+                        pw.TextSpan(
+                          text: 'As such please accommodate Mr. \/Ms. \/Mrs. ', 
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            dependent,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                            )
+                          )
+                        ),
+                        pw.TextSpan(
+                          text: ' his/her dependent for hospitalization. This is to further certify that Tibud Care of Tibud SKMPC guarantees payment of his hospitalization.', 
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                            color: PdfColors.white
+                          )
+                        ),
+                      ],
+                    ),
+                  )
+                )
+              ),
+              pw.Align(
+                alignment: pw.Alignment.centerLeft,
+                child: pw.Padding(
+                  padding: pw.EdgeInsets.only(left: 20, top: 10, bottom: 40, right: 20),
+                  child: pw.Text(
+                    '',
+                    style: pw.TextStyle(
+                      font: font3,
+                      fontSize: 12,
+                      lineSpacing: 10
+                    ),
+                  ),
+                )
+              ),
+              pw.Row(
+                children: [
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.only(left: 20),
+                    child: pw.Container(
+                      width: 300,
+                      height: size.height * .15,
+                      child: pw.Align(
+                        alignment: pw.Alignment.topLeft,
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.SizedBox(height: 30),
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font2,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.SizedBox(height: 5),
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ]
+                        )
+                      )
+                    ),
+                  ),
+                  pw.Expanded(
+                    child: pw.Container(
+                      height: size.height * .15,
+                      child: pw.Align(
+                        alignment: pw.Alignment.topLeft,
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.SizedBox(height: 30),
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font2,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.SizedBox(height: 5),
+                            pw.Text(
+                              '',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ]
+                        )
+                      )
+                    )
+                  )
+                ],
+              ),
+              pw.Spacer(),
+              pw.SizedBox(
+                width: double.infinity,
+                height: 90,
+              ),
+            ],
+          );
+        },
+      ),
+    );
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
   String fromDate = 'SELECT';
   String toDate = 'SELECT';
   int dateChecker = 0;
@@ -247,6 +635,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
       toDate = 'SELECT';
     },);
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -478,15 +868,12 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                       ),
                                       const SizedBox(width: 10,),
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .09,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                          ),
-                                          onPressed: () {
-                                            showDialog(
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
                                               context: context, 
                                               builder: (context){
                                                 return AlertDialog(
@@ -701,84 +1088,336 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                             ).then((_) => setState((){
                                               fetchMembers();
                                             }));
-                                          },
-                                          child: Text(
-                                            "Add new data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
+                                        }, 
+                                        child: Text(
+                                          'Add',
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
                                         )
                                       ),
                                       const SizedBox(width: 10,),
-                                      SizedBox(
-                                        width: size.width * .1,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute<void>(
-                                                builder: (context) => LoadingToTotals(user: widget.user,)
-                                              ),
-                                            );
-                                          },
-                                          child: Text(
-                                            "View full data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (context) => LoadingToTotals(user: widget.user,)
                                             ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "View full data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 10,),
-                                      SizedBox(
-                                        width: size.width * .09,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                          ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager));
-                                            await FileSaver.instance.saveFile('Premium', exported, "csv");
-                                            allActivity('Exported Dashboard to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute<void>(
+                                              builder: (context) => PrintingOriginal()
                                             ),
+                                          );
+                                        },
+                                        child: Text(
+                                          "Generate LOG",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                        )
+                                        ),
                                       ),
-                                      const SizedBox(width: 10,),
-                                      SizedBox(
-                                        width: size.width * .09,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
-                                          ),
-                                          onPressed: (){
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: () {
+                                          if(stateManager.currentRow != null){
+                                            // Navigator.push(
+                                            //   context,
+                                            //   MaterialPageRoute<void>(
+                                            //     builder: (context) => Printing(name: stateManager.currentRow!.cells['name']!.value)
+                                            //   ),
+                                            // );
                                             showDialog(
                                               context: context, 
-                                              builder: (context) => Import(index: 0,userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchMembers();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
+                                              builder: (context) {
+                                                return StatefulBuilder(
+                                                  builder: (context, setState) {
+                                                    return AlertDialog(
+                                                      shape: const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                          BorderRadius.all(
+                                                            Radius.circular(10.0))
+                                                      ),
+                                                      title: Text(
+                                                        'Edit Details',
+                                                        style: GoogleFonts.dosis(
+                                                          textStyle: const TextStyle(fontSize: 30, color: Colors.black)
+                                                        ),
+                                                      ),
+                                                      content: Builder(
+                                                        builder: (context){
+                                                          return SizedBox(
+                                                            height: size.height * .35,
+                                                            width: size.width * .35,
+                                                            child: Center(
+                                                              child: Form(
+                                                                key: formKey,
+                                                                child: Column(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                  children: [
+                                                                    SizedBox(
+                                                                      width: double.infinity,
+                                                                      child: DropdownButtonHideUnderline(
+                                                                        child: DropdownButton(
+                                                                          value: dropdownvalue,
+                                                                          icon: const Icon(Icons.keyboard_arrow_down),
+                                                                          menuMaxHeight: 300,
+                                                                          items: hospital.map((String items) {
+                                                                            return DropdownMenuItem(
+                                                                              value: items,
+                                                                              child: Text(items),
+                                                                            );
+                                                                          }).toList(), 
+                                                                          onChanged: ((String? value) {
+                                                                            setState(() {
+                                                                              dropdownvalue = value!;
+                                                                              if(value == 'Other'){
+                                                                                hospitalTextField = true;
+                                                                              }else{
+                                                                                hospitalTextField = false;
+                                                                              }
+                                                                            });
+                                                                          })
+                                                                        ),
+                                                                      ),
+                                                                    ),                          
+                                                                    TextFormField(
+                                                                      controller: notInTheListHospital,
+                                                                      style: GoogleFonts.dosis(
+                                                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
+                                                                      ),
+                                                                      decoration: InputDecoration(
+                                                                        prefixIcon: const Icon(Icons.local_hospital),
+                                                                        disabledBorder: OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                            color: Colors.green.shade900
+                                                                          )
+                                                                        ),
+                                                                        filled: true,
+                                                                        enabled: hospitalTextField,
+                                                                        fillColor: Colors.grey.shade200,
+                                                                        labelText: 'Hospital',
+                                                                        labelStyle: GoogleFonts.dosis(
+                                                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TextFormField(
+                                                                      controller: amount,
+                                                                      keyboardType: TextInputType.number,
+                                                                      style: GoogleFonts.dosis(
+                                                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
+                                                                      ),
+                                                                      validator: (value) {
+                                                                        final n = num.tryParse(value!);
+                                                                        if (value.isEmpty) {
+                                                                          return 'Can\'t be empty';
+                                                                        }else if(n == null){
+                                                                          return 'Invalid input';
+                                                                        }
+                                                                        return null;
+                                                                      },
+                                                                      decoration: InputDecoration(
+                                                                        prefixIcon: Icon(Icons.money),
+                                                                        filled: true,
+                                                                        fillColor: Colors.grey.shade200,
+                                                                        labelText: 'Amount',
+                                                                        labelStyle: GoogleFonts.dosis(
+                                                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    TextFormField(
+                                                                      controller: confinee,
+                                                                      validator: (value) {
+                                                                        if (value == null || value.isEmpty) {
+                                                                          return 'Can\'t be empty';
+                                                                        }
+                                                                        return null;
+                                                                      },
+                                                                      style: GoogleFonts.dosis(
+                                                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
+                                                                      ),
+                                                                      decoration: InputDecoration(
+                                                                        prefixIcon: Icon(Icons.person),
+                                                                        filled: true,
+                                                                        fillColor: Colors.grey.shade200,
+                                                                        labelText: 'Confinee',
+                                                                        labelStyle: GoogleFonts.dosis(
+                                                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            )
+                                                          );
+                                                        }
+                                                      ),
+                                                      actions: [
+                                                        SizedBox(
+                                                          width: size.width * .1,
+                                                          height: 40,
+                                                          child: TextButton(
+                                                            style: ButtonStyle(
+                                                              backgroundColor: MaterialStateProperty.all(Colors.white),
+                                                            ),
+                                                            onPressed: (){
+                                                              change = false;
+                                                              Navigator.pop(context);
+                                                            },
+                                                            child: Text(
+                                                              "CLOSE",
+                                                              style: GoogleFonts.dosis(
+                                                                textStyle: TextStyle(fontSize: 20, color: Colors.green.shade900)
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ),
+                                                        const SizedBox(width: 30,),
+                                                        SizedBox(
+                                                          width: size.width * .1,
+                                                          height: 40,
+                                                          child: TextButton(
+                                                            style: ButtonStyle(
+                                                              backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                                            ),
+                                                            onPressed: () {
+                                                              if(formKey.currentState!.validate()){
+                                                                change = true;
+                                                                String to = '';
+                                                                if(dropdownvalue == 'Other'){
+                                                                  to = notInTheListHospital.text;
+                                                                }else{
+                                                                  to = dropdownvalue;
+                                                                }
+                                                                String amountInNum = NumberFormat('#,###,##0', 'en_US').format(int.parse(amount.text));
+                                                                String amountInWords = NumberToWordsEnglish.convert(int.parse(amount.text)).toUpperCase();
+                                                                String dependent = confinee.text.toUpperCase();
+                                                                printLOG(stateManager.currentRow!.cells['name']!.value, to, amountInNum, amountInWords, dependent);
+                                                                Navigator.pop(context);
+                                                                dropdownvalue = 'BONTUYAN MEDICAL HOSPITAL, INC.';
+                                                                amount.text = '';
+                                                                confinee.text = '';
+                                                                notInTheListHospital.text = '';
+                                                              }
+                                                            },
+                                                            child: Text(
+                                                              "Print",
+                                                              style: GoogleFonts.dosis(
+                                                                textStyle: const TextStyle(fontSize: 20, color: Colors.white)
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ),
+                                                        const SizedBox(width: 75,),
+                                                      ],
+                                                    );
+                                                  }
+                                                );
+                                              }
+                                            );
+                                          }else{
+                                            showDialog(
+                                              context: context, 
+                                              builder: (context){
+                                                return AlertDialog(
+                                                  title: Text(
+                                                    'ERROR!',
+                                                    style: GoogleFonts.dosis(
+                                                      textStyle: const TextStyle(fontSize: 25, color: Colors.red, letterSpacing: 5)
+                                                    ),
+                                                  ),
+                                                  content: Text(
+                                                    'Please select a row from dashboard before printing.',
+                                                    style: GoogleFonts.dosis(
+                                                      textStyle: const TextStyle(fontSize: 20)
+                                                    ),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: Text(
+                                                        'Close',
+                                                        style: GoogleFonts.dosis(
+                                                          textStyle: const TextStyle(fontSize: 20)
+                                                        ),
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop();
+                                                      },
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                            );
+                                          }
+                                        },
+                                        child: Text(
+                                          "Print LOG",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                        )
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10,),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager));
+                                          await FileSaver.instance.saveFile('Premium', exported, "csv");
+                                          allActivity('Exported Dashboard to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10,),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent)
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 0,userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchMembers();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1469,74 +2108,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ),    
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager1));
+                                          await FileSaver.instance.saveFile('Consultation', exported, "csv");
+                                          allActivity('Exported Consultation to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager1));
-                                            await FileSaver.instance.saveFile('Consultation', exported, "csv");
-                                            allActivity('Exported Consultation to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 1, memberID: '', userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchConsult();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 1, memberID: '', userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchConsult();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 1, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchConsult();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 1, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchConsult();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1883,74 +2510,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ), 
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager2));
+                                          await FileSaver.instance.saveFile('Laboratory', exported, "csv");
+                                          allActivity('Exported Laboratory to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager2));
-                                            await FileSaver.instance.saveFile('Laboratory', exported, "csv");
-                                            allActivity('Exported Laboratory to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 2, memberID: '',userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchLab();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 2, memberID: '',userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchLab();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 2, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchLab();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 2, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchLab();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2263,74 +2878,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ), 
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager3));
+                                          await FileSaver.instance.saveFile('Accidents', exported, "csv");
+                                          allActivity('Exported Accidents to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager3));
-                                            await FileSaver.instance.saveFile('Accidents', exported, "csv");
-                                            allActivity('Exported Accidents to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 3, memberID: '',userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchAccidents();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 3, memberID: '',userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchAccidents();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 3, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchAccidents();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 3, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchAccidents();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -2664,74 +3267,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ),
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager4));
+                                          await FileSaver.instance.saveFile('Hospitalization', exported, "csv");
+                                          allActivity('Exported Hospitalization to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager4));
-                                            await FileSaver.instance.saveFile('Hospitalization', exported, "csv");
-                                            allActivity('Exported Hospitalization to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 4, memberID: '',userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchHospitalization();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 4, memberID: '',userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchHospitalization();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 4, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchHospitalization();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 4, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchHospitalization();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -3065,74 +3656,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ),
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager5));
+                                          await FileSaver.instance.saveFile('DAC', exported, "csv");
+                                          allActivity('Exported DAC to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager5));
-                                            await FileSaver.instance.saveFile('DAC', exported, "csv");
-                                            allActivity('Exported DAC to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 5, memberID: '',userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchDAC();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 5, memberID: '',userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchDAC();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 5, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchDAC();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 5, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchDAC();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -3421,74 +4000,62 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         ),
                                       ),
                                       const Spacer(),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: () async {
+                                          loading();
+                                          var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager6));
+                                          await FileSaver.instance.saveFile('Dental', exported, "csv");
+                                          allActivity('Exported Dental to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
+                                        },
+                                        child: Text(
+                                          "Export to CSV",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: () async {
-                                            loading();
-                                            var exported = const Utf8Encoder().convert(pluto_grid_export.PlutoGridExport.exportCSV(stateManager6));
-                                            await FileSaver.instance.saveFile('Dental', exported, "csv");
-                                            allActivity('Exported Dental to csv', widget.user.username!, widget.user.password!, widget.user.name!, widget.user.idno!);
-                                          },
-                                          child: Text(
-                                            "Export to CSV",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => AddNewData(index: 6, memberID: '',userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchDental();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Add New Data",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => AddNewData(index: 6, memberID: '',userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchDental();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Add New Data",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                       const SizedBox(width: 20,),
-                                      SizedBox(
-                                        width: size.width * .07,
-                                        height: 30,
-                                        child: ElevatedButton(
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all(Colors.green.shade900),
+                                      TextButton(
+                                        style: ButtonStyle(
+                                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                                        ),
+                                        onPressed: (){
+                                          showDialog(
+                                            context: context, 
+                                            builder: (context) => Import(index: 6, userAccount: widget.user,)
+                                          ).then((_) => setState((){
+                                            fetchDental();
+                                          }));
+                                        },
+                                        child: Text(
+                                          "Import",
+                                          style: GoogleFonts.dosis(
+                                            textStyle: TextStyle(fontSize: size.width * .015, color: Colors.green.shade900)
                                           ),
-                                          onPressed: (){
-                                            showDialog(
-                                              context: context, 
-                                              builder: (context) => Import(index: 6, userAccount: widget.user,)
-                                            ).then((_) => setState((){
-                                              fetchDental();
-                                            }));
-                                          },
-                                          child: Text(
-                                            "Import",
-                                            style: GoogleFonts.dosis(
-                                              textStyle: TextStyle(fontSize: size.width * .007, color: Colors.white)
-                                            ),
-                                          ),
-                                        )
+                                        ),
                                       ),
                                     ],
                                   ),

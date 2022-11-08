@@ -25,8 +25,10 @@ class _LoginState extends State<Login> {
   final uname2 = TextEditingController();
   final passwrd2 = TextEditingController();
   final user = TextEditingController();
+  final pass = TextEditingController();
 
   bool result = true;
+  bool lock = true;
 
   @override
   void initState() {
@@ -49,6 +51,7 @@ class _LoginState extends State<Login> {
       ),
     );
     user.text = '';
+    pass.text = '';
   }
 
   void adminNavigate(){
@@ -60,6 +63,7 @@ class _LoginState extends State<Login> {
     );
     allActivity('admin log in', '[admin]', 'admin35460901904','[admin]','[admin]');
     user.text = '';
+    pass.text = '';
   }
   
   @override
@@ -178,7 +182,44 @@ class _LoginState extends State<Login> {
                               ),
                             ),
                           ),
-                          const PasswordForm(),
+                          StatefulBuilder(
+                            builder: ((context, setState) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 40,
+                                  right: 40
+                                ),
+                                child: SizedBox(
+                                  width: size.width * .3,
+                                  height: size.height * .09,
+                                  child: TextFormField(
+                                    onChanged: (value){
+                                      password = value;
+                                    },
+                                    controller: pass,
+                                    toolbarOptions: const ToolbarOptions(selectAll: true),
+                                    obscureText: (lock) ? true:false,
+                                    obscuringCharacter: '•',
+                                    decoration: InputDecoration(
+                                      suffixIcon: IconButton(
+                                        splashRadius: 1,
+                                        onPressed: (){
+                                          setState(() {
+                                            lock = lock?false:true;
+                                          });
+                                        }, 
+                                        icon: (lock)?const Icon(Icons.visibility_off):const Icon(Icons.visibility),
+                                      ),
+                                      labelText: 'Password',
+                                      labelStyle: GoogleFonts.dosis(
+                                        textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
+                                      ),
+                                    ),
+                                  )
+                                ),
+                              );
+                            })
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(
                               left: 40,
@@ -221,8 +262,14 @@ class _LoginState extends State<Login> {
                                 onPressed: () async {
                                   int credentials = await userCheckCredentials(username, password);
                                   if(credentials == 1){
+                                    setState(() {
+                                      lock = true;
+                                    });
                                     adminNavigate();
                                   }else if(credentials == 2){
+                                    setState(() {
+                                      lock = true;
+                                    });
                                     navigate();
                                   }else{
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -567,59 +614,6 @@ class _LoginState extends State<Login> {
                 )
               ],
             )
-      ),
-    );
-  }
-}
-
-
-class PasswordForm extends StatefulWidget {
-  const PasswordForm({Key? key}) : super(key: key);
-
-  @override
-  State<PasswordForm> createState() => _PasswordFormState();
-}
-
-
-class _PasswordFormState extends State<PasswordForm> {
-  bool lock = true;
-  final pass = TextEditingController();
-
-  @override
-  Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    return Padding(
-      padding: const EdgeInsets.only(
-        left: 40,
-        right: 40
-      ),
-      child: SizedBox(
-        width: size.width * .3,
-        height: size.height * .09,
-        child: TextFormField(
-          onChanged: (value){
-            password = value;
-          },
-          controller: pass,
-          toolbarOptions: const ToolbarOptions(selectAll: true),
-          obscureText: (lock) ? true:false,
-          obscuringCharacter: '•',
-          decoration: InputDecoration(
-            suffixIcon: IconButton(
-              splashRadius: 1,
-              onPressed: (){
-                setState(() {
-                  lock = lock?false:true;
-                });
-              }, 
-              icon: (lock)?const Icon(Icons.visibility_off):const Icon(Icons.visibility),
-            ),
-            labelText: 'Password',
-            labelStyle: GoogleFonts.dosis(
-              textStyle: TextStyle(fontSize: size.width * .01, color: Colors.black)
-            ),
-          ),
-        )
       ),
     );
   }

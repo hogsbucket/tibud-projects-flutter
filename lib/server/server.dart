@@ -51,7 +51,6 @@ Future<bool> checkCredentials(String uname, String pword) async {
 Future<int> userCheckCredentials(String uname, String pword) async {
   Box<UserAccount> userAccount = store!.box<UserAccount>();
   Box<AdminAccount> admin = store!.box<AdminAccount>();
-  final rel = admin.get(1);
   final checkadmin = admin.query(AdminAccount_.username.equals(uname).and(AdminAccount_.password.equals(pword))).build().findUnique();
   
   if(checkadmin == null){

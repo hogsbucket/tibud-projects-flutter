@@ -8,69 +8,44 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:number_to_words_english/number_to_words_english.dart';
+import 'package:tibud_care_system/utils/constant.dart';
 
-class Printing extends StatefulWidget {
-  Printing({super.key, required this.name});
-  String name;
+class PrintingOriginal extends StatefulWidget {
+  PrintingOriginal({super.key});
 
   @override
-  State<Printing> createState() => _PrintingState();
+  State<PrintingOriginal> createState() => _PrintingOriginalState();
 }
 
-class _PrintingState extends State<Printing> {
-  String amountInWords = '_____________________________________________________________';
-  String dependent = '________________________________________________';
-  String amountInNum = '________________';
+class _PrintingOriginalState extends State<PrintingOriginal> {
+  String amountInWords = '_______________________________________________________________________________';
+  String dependent = '__________________________________________________________';
+  String name = '____________________________________________';
+  String amountInNum = '__________________________';
   String subject = '________________________________________________';
   String to = '________________________________________________';
-  String ophead = 'Mary Grace T. Sebua';
-  String postingclerk = 'Jenny P. Palacios';
+
   final operationHead = TextEditingController();
   final postingClerk = TextEditingController();
-  final amount = TextEditingController();
-  final subjectOfHospitalization = TextEditingController();
-  final confinee = TextEditingController();
-  final notInTheListHospital = TextEditingController();
   final formKey = GlobalKey<FormState>();
   bool change = false;
   bool show = true;
+  bool hospitalTextField = false;
   String? sub;
-  var hospital = [   
-    'Item 1',
-    'Item 2',
-    'Item 3',
-    'Item 4',
-    'Item 11',
-    'Item 21',
-    'Item 31',
-    'Item 41',
-    'Item 12',
-    'Item 22',
-    'Item 32',
-    'Item 42',
-    'Item 13',
-    'Item 23',
-    'Item 33',
-    'Item 43',
-    'Other',
-  ];
-  String dropdownvalue = 'Item 1';
+
 
   @override
   void initState() {
     // TODO: implement initState
     operationHead.text = ophead;
     postingClerk.text = postingclerk;
+    subject = 'Hospitalization - Out Patient Case Only';
     super.initState();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
-    amount.dispose();
-    subjectOfHospitalization.dispose();
-    confinee.dispose();
-    notInTheListHospital.dispose();
     super.dispose();
   }
   
@@ -128,47 +103,13 @@ class _PrintingState extends State<Printing> {
                       content: Builder(
                         builder: (context){
                           return SizedBox(
-                            height: size.height * .75,
+                            height: size.height * .3,
                             width: size.width * .35,
                             child: Center(
                               child: Form(
                                 key: formKey,
                                 child: Column(
                                   children: [
-                                    SizedBox(
-                                      width: double.infinity,
-                                      child: DropdownButton(
-                                        value: dropdownvalue,
-                                        icon: const Icon(Icons.keyboard_arrow_down),
-                                        menuMaxHeight: 300,
-                                        items: hospital.map((String items) {
-                                          return DropdownMenuItem(
-                                            value: items,
-                                            child: Text(items),
-                                          );
-                                        }).toList(), 
-                                        onChanged: ((String? value) {
-                                          setState(() {
-                                            dropdownvalue = value!;
-                                          });
-                                        })
-                                      ),
-                                    ),                            
-                                    TextFormField(
-                                      controller: notInTheListHospital,
-                                      style: GoogleFonts.dosis(
-                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
-                                      ),
-                                      decoration: InputDecoration(
-                                        prefixIcon: Icon(Icons.money),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade200,
-                                        labelText: 'Hospital',
-                                        labelStyle: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
-                                        ),
-                                      ),
-                                    ),
                                     Column(
                                       children: [
                                         RadioListTile(
@@ -193,53 +134,6 @@ class _PrintingState extends State<Printing> {
                                         ),
                                       ],
                                     ),
-                                    TextFormField(
-                                      controller: amount,
-                                      keyboardType: TextInputType.number,
-                                      style: GoogleFonts.dosis(
-                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
-                                      ),
-                                      validator: (value) {
-                                        final n = num.tryParse(value!);
-                                        if (value.isEmpty) {
-                                          return 'Can\'t be empty';
-                                        }else if(n == null){
-                                          return 'Invalid input';
-                                        }
-                                        return null;
-                                      },
-                                      decoration: InputDecoration(
-                                        prefixIcon: Icon(Icons.money),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade200,
-                                        labelText: 'Amount',
-                                        labelStyle: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10,),
-                                    TextFormField(
-                                      controller: confinee,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Can\'t be empty';
-                                        }
-                                        return null;
-                                      },
-                                      style: GoogleFonts.dosis(
-                                        textStyle: TextStyle(fontSize: size.width * .012, color: Colors.black)
-                                      ),
-                                      decoration: InputDecoration(
-                                        prefixIcon: Icon(Icons.person),
-                                        filled: true,
-                                        fillColor: Colors.grey.shade200,
-                                        labelText: 'Confinee',
-                                        labelStyle: GoogleFonts.dosis(
-                                          textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
-                                        ),
-                                      ),
-                                    ),
                                     const SizedBox(height: 10,),
                                     TextFormField(
                                       controller: operationHead,
@@ -255,12 +149,6 @@ class _PrintingState extends State<Printing> {
                                           textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
                                         ),
                                       ),
-                                    ),
-                                    CheckboxListTile(
-                                      value: show,
-                                      title: Text('Show Signature'),
-                                      controlAffinity: ListTileControlAffinity.leading, 
-                                      onChanged: (value) => setState(() => show = value!)
                                     ),
                                     const SizedBox(height: 10,),
                                     TextFormField(
@@ -336,17 +224,9 @@ class _PrintingState extends State<Printing> {
             ).then((value){
               if(change){
                 setState(() {
-                  if(dropdownvalue == 'Other'){
-                    to = notInTheListHospital.text;
-                  }else{
-                    to = dropdownvalue;
-                  }
                   subject = 'Hospitalization - $sub Patient Case Only';
-                  amountInNum = NumberFormat('#,###,##0', 'en_US').format(int.parse(amount.text));
-                  amountInWords = NumberToWordsEnglish.convert(int.parse(amount.text)).toUpperCase();
                   ophead = operationHead.text;
                   postingclerk = postingClerk.text;
-                  dependent = confinee.text.toUpperCase();
                 });
               }
             });
@@ -365,7 +245,6 @@ class _PrintingState extends State<Printing> {
     final font3 = await PdfGoogleFonts.newsreaderRegular();
     final header = await imageFromAssetBundle('assets/letterhead-top.png');
     final footer = await imageFromAssetBundle('assets/letterhead-bottom.png');
-    final signature = await imageFromAssetBundle('assets/signature.png');
 
     pdf.addPage(
       pw.Page(
@@ -396,18 +275,17 @@ class _PrintingState extends State<Printing> {
                   child:
                    pw.RichText(
                     text: pw.TextSpan(
-                      text: 'Date: ',
+                      text: 'Date:   ',
                       style: pw.TextStyle(
                         font: font2,
                         fontSize: 12,
                       ),
                       children: [
                         pw.TextSpan(
-                          text: DateFormat.yMMMMd().format(DateTime.now()), 
+                          text: '___________________________', 
                           style: pw.TextStyle(
                             font: font2,
                             fontSize: 12,
-                            decoration: pw.TextDecoration.underline,
                           )
                         ),
                       ],
@@ -454,14 +332,16 @@ class _PrintingState extends State<Printing> {
                         fontSize: 12,
                       ),
                       children: [
-                        pw.TextSpan(
-                          text: subject, 
-                          style: pw.TextStyle(
-                            font: font2,
-                            fontSize: 12,
-                            decoration: pw.TextDecoration.underline,
+                        pw.WidgetSpan(
+                          child: pw.Text(
+                            subject,
+                            style: pw.TextStyle(
+                              font: font2,
+                              fontSize: 9,
+                              decoration: pw.TextDecoration.underline
+                            )
                           )
-                        ),
+                        )
                       ],
                     ),
                   )
@@ -473,16 +353,22 @@ class _PrintingState extends State<Printing> {
                   padding: pw.EdgeInsets.only(left: 20, top: 50, bottom: 20, right: 20),
                   child: pw.RichText(
                     text: pw.TextSpan(
-                      text: 'This is to certify that   ',
+                      text: '',
                       style: pw.TextStyle(
                         font: font3,
                         fontSize: 12,
                         lineSpacing: 10,
-                        wordSpacing: 2
                       ),
                       children: [
                         pw.TextSpan(
-                          text: '${widget.name}', 
+                          text: 'This is to certify that   ', 
+                          style: pw.TextStyle(
+                            font: font3,
+                            fontSize: 12,
+                          )
+                        ),
+                        pw.TextSpan(
+                          text: name, 
                           style: pw.TextStyle(
                             font: font2,
                             fontSize: 12,
@@ -490,7 +376,7 @@ class _PrintingState extends State<Printing> {
                           )
                         ),
                         pw.TextSpan(
-                          text: '   is a bonafide member of  "TIBUD CARE".\nThe Cooperative Medical Fund System of Tibud Sa Katibawasan Multi-Purpose Cooperative\nHe or she entitled to a limit amounting  ', 
+                          text: '   is a bonafide member of  "TIBUD CARE".\nThe Cooperative Medical Fund System of Tibud Sa Katibawasan Multi-Purpose Cooperative. He or she entitled to a limit amounting  ', 
                           style: pw.TextStyle(
                             font: font3,
                             fontSize: 12,
@@ -543,7 +429,6 @@ class _PrintingState extends State<Printing> {
                         font: font3,
                         fontSize: 12,
                         lineSpacing: 10,
-                        wordSpacing: 2
                       ),
                       children: [
                         pw.TextSpan(
@@ -625,40 +510,31 @@ class _PrintingState extends State<Printing> {
                       height: size.height * .15,
                       child: pw.Align(
                         alignment: pw.Alignment.topLeft,
-                        child: pw.Stack(
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
                           children: [
-                            pw.Column(
-                              crossAxisAlignment: pw.CrossAxisAlignment.start,
-                              children: [
-                                pw.Text(
-                                  'Noted by:',
-                                  style: pw.TextStyle(
-                                    font: font3,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 30),
-                                pw.Text(
-                                  ophead,
-                                  style: pw.TextStyle(
-                                    font: font2,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                pw.SizedBox(height: 5),
-                                pw.Text(
-                                  'Operations Head',
-                                  style: pw.TextStyle(
-                                    font: font3,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ]
+                            pw.Text(
+                              'Noted by:',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
                             ),
-                            if(show)pw.Container(
-                              width: 100,
-                              height: 50,
-                              child: pw.Image(signature, fit: pw.BoxFit.cover)
+                            pw.SizedBox(height: 30),
+                            pw.Text(
+                              ophead,
+                              style: pw.TextStyle(
+                                font: font2,
+                                fontSize: 12,
+                              ),
+                            ),
+                            pw.SizedBox(height: 5),
+                            pw.Text(
+                              'Operations Head',
+                              style: pw.TextStyle(
+                                font: font3,
+                                fontSize: 12,
+                              ),
                             ),
                           ]
                         )
@@ -678,10 +554,6 @@ class _PrintingState extends State<Printing> {
         },
       ),
     );
-    if(change){
-      final file = File('C:/tibud care server/TCA-LOG/${widget.name}-LOG-${DateFormat.yMMMd().format(DateTime.now())}.pdf');
-      await file.writeAsBytes(await pdf.save());
-    }
     return pdf.save();
   }
 }
