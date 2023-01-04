@@ -243,6 +243,7 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
         }
       }
     }
+    dates.sort((a,b) => a.compareTo(b));
     for (var i = 0; i < dates.length; i++) {
       double total = 0;
       for (var x in members) {
@@ -292,6 +293,7 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
         dates.retainWhere((x) => ids.add(x));
       }
     }
+    dates.sort((a,b) => a.compareTo(b));
     for (var i = 0; i < dates.length; i++) {
       DateTime date = DateTime.parse(dates[i]);
       var day = DateFormat.yMMMMd().format(date);
@@ -322,6 +324,7 @@ class _TotalPerPayrollState extends State<TotalPerPayroll> {
         dates.retainWhere((x) => ids.add(x));
       }
     }
+    dates.sort((a,b) => a.compareTo(b));
     for (var x in members) {
       if(x.branch == branch){
         rows.add(

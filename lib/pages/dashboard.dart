@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:file_saver/file_saver.dart';
@@ -795,11 +794,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'PREMIUM',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'PREMIUM',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(members.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -1935,11 +1945,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'Consultation',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Consultation',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(consultation.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -2185,8 +2206,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           case 4:consultation[event.rowIdx!].hospital = event.value.toString().toUpperCase();break;
                                           case 5:consultation[event.rowIdx!].doc = DateFormat.yMd('en_US').parse(event.value).toString();break;
                                           case 6:consultation[event.rowIdx!].dod = DateFormat.yMd('en_US').parse(event.value).toString();break;
-                                          case 7:consultation[event.rowIdx!].labBasic = double.parse(event.value);break;
-                                          case 8:consultation[event.rowIdx!].labClaims = double.parse(event.value);break;
+                                          case 7:consultation[event.rowIdx!].labBasic = event.value;break;
+                                          case 8:consultation[event.rowIdx!].labClaims = event.value;break;
                                           case 10:consultation[event.rowIdx!].classification = event.value.toString().toUpperCase();break;
                                           case 11:consultation[event.rowIdx!].remarks = event.value.toString().toUpperCase();break;
                                           case 12:consultation[event.rowIdx!].diagnosis = event.value.toString().toUpperCase();break;
@@ -2337,11 +2358,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'LABORATORY',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'LABORATORY',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(laboratory.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -2586,8 +2618,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           case 3:laboratory[event.rowIdx!].confinee = event.value.toString().toUpperCase();break;
                                           case 4:laboratory[event.rowIdx!].hospital = event.value.toString().toUpperCase();break;
                                           case 5:laboratory[event.rowIdx!].dol = DateFormat.yMd('en_US').parse(event.value).toString();break;
-                                          case 6:laboratory[event.rowIdx!].labBasic = double.parse(event.value);break;
-                                          case 7:laboratory[event.rowIdx!].labClaims = double.parse(event.value);break;
+                                          case 6:laboratory[event.rowIdx!].labBasic = event.value;break;
+                                          case 7:laboratory[event.rowIdx!].labClaims = event.value;break;
                                           default:
                                         }
                                         updateLaboratory(laboratory[event.rowIdx!],widget.user);
@@ -2711,11 +2743,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'ACCIDENTS',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'ACCIDENTS',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(accidents.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -2955,8 +2998,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           case 4:accidents[event.rowIdx!].hospital = event.value.toString().toUpperCase();break;
                                           case 5:accidents[event.rowIdx!].doc = DateFormat.yMd('en_US').parse(event.value).toString();break;
                                           case 6:accidents[event.rowIdx!].dod = DateFormat.yMd('en_US').parse(event.value).toString();break;
-                                          case 7:accidents[event.rowIdx!].accBasic = double.parse(event.value);break;
-                                          case 8:accidents[event.rowIdx!].accClaims = double.parse(event.value);break;
+                                          case 7:accidents[event.rowIdx!].accBasic = event.value;break;
+                                          case 8:accidents[event.rowIdx!].accClaims = event.value;break;
                                           case 10:accidents[event.rowIdx!].classification = event.value.toString().toUpperCase();break;
                                           case 11:accidents[event.rowIdx!].remarks = event.value.toString().toUpperCase();break;
                                           default:
@@ -3100,11 +3143,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'HOSPITALIZATION',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'HOSPITALIZATION',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(hospitalization.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -3344,8 +3398,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                           case 4:hospitalization[event.rowIdx!].hospital = event.value.toString().toUpperCase();break;
                                           case 5:hospitalization[event.rowIdx!].doa = DateFormat.yMd('en_US').parse(event.value).toString();break;
                                           case 6:hospitalization[event.rowIdx!].dod = DateFormat.yMd('en_US').parse(event.value).toString();break;
-                                          case 7:hospitalization[event.rowIdx!].hosBasic = double.parse(event.value);break;
-                                          case 8:hospitalization[event.rowIdx!].hosClaims = double.parse(event.value);break;
+                                          case 7:hospitalization[event.rowIdx!].hosBasic = event.value;break;
+                                          case 8:hospitalization[event.rowIdx!].hosClaims = event.value;break;
                                           case 10:hospitalization[event.rowIdx!].classification = event.value.toString().toUpperCase();break;
                                           case 11:hospitalization[event.rowIdx!].remarks = event.value.toString().toUpperCase();break;
                                           default:
@@ -3489,11 +3543,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'DAC',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'DAC',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(dac.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(
@@ -3730,7 +3795,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                         switch (event.columnIdx) {
                                           case 2:dac[event.rowIdx!].relationship = event.value.toString().toUpperCase();break;
                                           case 3:dac[event.rowIdx!].classification = event.value.toString().toUpperCase();break;
-                                          case 4:dac[event.rowIdx!].amount = double.parse(event.value);break;
+                                          case 4:dac[event.rowIdx!].amount = event.value;break;
                                           case 5:dac[event.rowIdx!].dod = DateFormat.yMd('en_US').parse(event.value).toString();break;
                                           default:
                                         }
@@ -3833,11 +3898,22 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin, Re
                                     right: 20,
                                     top: 5
                                   ),
-                                  child: Text(
-                                    'DENTAL',
-                                    style: GoogleFonts.dosis(
-                                      textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
-                                    ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'DENTAL',
+                                        style: GoogleFonts.dosis(
+                                          textStyle: TextStyle(fontSize: size.width * .03, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        'headcount - ${NumberFormat('###,###', 'en_US').format(dental.length)}',
+                                        style: GoogleFonts.zenMaruGothic(
+                                          textStyle: TextStyle(fontSize: size.width * .015, color: Colors.black, letterSpacing: 5)
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 Padding(

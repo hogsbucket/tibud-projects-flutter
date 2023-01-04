@@ -6,6 +6,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/add_dialog.dart';
 import 'package:tibud_care_system/pages/loading.dart';
+import 'package:tibud_care_system/pages/print_contribution.dart';
 import 'package:tibud_care_system/server/server.dart';
 import 'package:tibud_care_system/utils/constant.dart';
 import 'package:tibud_care_system/utils/datatable.dart';
@@ -623,6 +624,29 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                         ),
                       ),
                     ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        style: ButtonStyle(
+                          surfaceTintColor: MaterialStateProperty.all(Colors.transparent),
+                          overlayColor: MaterialStateProperty.all(Colors.transparent),
+                        ),
+                        onPressed: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute<void>(
+                              builder: (context) => PrintContribution(info: widget.info,)
+                            ),
+                          );
+                        }, 
+                        child: Text(
+                          "Print Contribution",
+                          style: GoogleFonts.dosis(
+                            textStyle: TextStyle(fontSize: size.width * .01, color: Colors.green.shade900,)
+                          ),
+                        ),
+                      ),
+                    ),
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(
@@ -768,11 +792,11 @@ class _InformationState extends State<Information> with TickerProviderStateMixin
                                   onLoaded: (event) => stateManager = event.stateManager,
                                   onChanged: (event){
                                     switch (event.columnIdx) {
-                                      case 0:member.contributions[event.rowIdx!].date = DateFormat.yMd('en_US').parse(event.value).toString().toUpperCase();break;
-                                      case 1:member.contributions[event.rowIdx!].amount = double.parse(event.value);break;
+                                      case 0:member.contributions[event.rowIdx!].date = DateFormat.yMd().parse(event.value).toString().toUpperCase();break;
+                                      case 1:member.contributions[event.rowIdx!].amount = event.value;break;
                                       default:
                                     }
-                                    updateContribution(member.contributions[event.rowIdx!], member, widget.user);
+                                    // updateContribution(member.contributions[event.rowIdx!], member, widget.user);
                                   },
                                   configuration: PlutoGridConfiguration(
                                     style: PlutoGridStyleConfig(

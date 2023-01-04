@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/pages/admin.dart';
+import 'package:tibud_care_system/pages/admin_user_members_branches.dart';
 import 'package:tibud_care_system/pages/dashboard.dart';
 import 'package:tibud_care_system/pages/member_information.dart';
 import 'package:tibud_care_system/pages/total_per_payroll.dart';
@@ -216,6 +217,77 @@ class _LoadingToTotalsState extends State<LoadingToTotals> {
     );
   }
 
+
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: 20,),
+            Text(
+              'Retrieving data. Please wait....',
+              style: GoogleFonts.dosis(
+                textStyle: TextStyle(
+                  fontSize: size.width * .015
+                )
+              ),
+            )
+          ],
+        )
+      ),
+    );
+  }
+}
+
+class LoadingDetails extends StatefulWidget {
+  LoadingDetails({super.key, required this.index});
+  int index;
+
+  @override
+  State<LoadingDetails> createState() => _LoadingDetailsState();
+}
+
+class _LoadingDetailsState extends State<LoadingDetails> {
+  var user;
+  var member;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(Duration(seconds: 2), () async {
+      if(widget.index == 1){
+        user = await getAllUser();
+        navigate();
+      }else{
+        member = await getAllMember();
+        navigate2();
+      }
+    });
+  }
+
+  void navigate(){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => Deatils(index: widget.index, list: user,)
+      ),
+    );
+  }
+
+  void navigate2(){
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute<void>(
+        builder: (context) => Deatils(index: widget.index, list: member,)
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

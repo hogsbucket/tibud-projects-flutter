@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:intl/intl.dart';
 import 'package:tibud_care_system/model/model.dart';
 import 'package:tibud_care_system/objectbox.g.dart';
 import 'package:tibud_care_system/utils/constant.dart';
@@ -498,6 +499,11 @@ Future<void> fetchBeneficiaries(int id)async{
 
 //-------------------------------------------------------------------------Start getAll()----------------------------------------------------------------------------------------------------------
 
+Future<List<UserAccount>> getAllUser() async {
+  List<UserAccount> userAccount = store!.box<UserAccount>().getAll();
+  return userAccount;
+}
+
 Future<List<Contributions>> getAllContributions() async {
   Box<Contributions> contri = store!.box<Contributions>();
   final results = contri.getAll();
@@ -505,7 +511,7 @@ Future<List<Contributions>> getAllContributions() async {
 }
 
 Future<List<Member>> getAllMember() async {
-  final results = box!.getAll();
+  var results = box!.getAll();
   results.forEach((e) => e.contributions.sort(((a, b) => a.date!.compareTo(b.date!))));
   return results;
 }
@@ -551,19 +557,20 @@ Future<List<Direct>> getAllBeneficiaries(int id) async {
   return results!.direct;
 }
 
-Future<List<String>> getContributionDates(String branch) async {
-  Box<Contributions> con = store!.box<Contributions>();
-  var list = con.getAll();
-  List<String> dates = [];
-
-  final ids = Set();
-  list.retainWhere((x) => ids.add(x.date));
-
-  for (var e in list) {
-    dates.add(e.date!);
-  }
-  return dates;
-}
+// Future<List<String>> getContributionDates(String branch) async {
+//   Box<Contributions> con = store!.box<Contributions>();
+//   var list = con.getAll();
+//   List<String> dates = [];
+//   for (var e in list) {
+//     if(e.branch == branch){
+//       if(!dates.contains(e.date)){
+//       dates.add(e.date!);
+//     }
+//     }
+//   }
+//   print(dates);
+//   return dates;
+// }
 
 Future<List<String>> getAllBranches() async{
   final results = box!.getAll();
@@ -585,7 +592,6 @@ Future<List<String>> getAllDisabledBranch() async {
   for (var e in results) {
     list.add(e.branch!);
   }
-
   return list;
 }
 
@@ -641,6 +647,15 @@ Future<void> removeFromDatabase(String name, int id, UserAccount user) async {
   Direct result = builder.build().findUnique()!;
   direct.remove(result.id);
   allActivity('removed beneficiary name: ${result.name}', user.username!, user.password!, user.name!, user.idno!);
+}
+
+Future removeFromBranchDatabase(List<String> removeList) async {
+  final result = box!.getAll();
+  for (var element in result) {
+    if(removeList.contains(element.branch)){
+      box!.remove(element.id);
+    }
+  }
 }
 
 //-------------------------------------------------------------------------Record All Activity--------------------------------------------------------------------------------------------------------

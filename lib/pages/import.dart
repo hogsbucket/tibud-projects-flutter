@@ -318,7 +318,7 @@ void import1(RequiredArgs requiredArgs){
             error = '${row[0]!.rowIndex + 1}/${row[0]!.value}/${row[0]!.sheetName}';
             if(row[0]!.value.toString().toUpperCase() == 'ID NO.'){
               DateTime date1 = DateTime.parse(row[2]!.value);
-              date = row[2]!.value;
+              date = date1.toString();
             }else{
               final mem = memberlist.indexWhere((element) => element.idno == row[0]!.value);
               if(mem >= 0){

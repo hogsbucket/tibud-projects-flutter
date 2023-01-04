@@ -247,7 +247,9 @@ List<PlutoRow> memberDentalRow(int id){
 
 List<PlutoRow> infoDashRow(Member mem){
   List<PlutoRow> rows = [];
-  for (var x in mem.contributions) {
+  var list = mem.contributions;
+  list.sort((a,b) => a.date!.compareTo(b.date!)); // sort date
+  for (var x in list) {
     String day;
     if(x.date != ' '){
       DateTime date = DateTime.parse(x.date!);
